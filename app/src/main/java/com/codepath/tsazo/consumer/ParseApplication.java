@@ -2,6 +2,7 @@ package com.codepath.tsazo.consumer;
 
 import android.app.Application;
 
+import com.codepath.tsazo.consumer.models.Order;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
