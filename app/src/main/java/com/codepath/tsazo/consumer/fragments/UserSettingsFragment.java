@@ -17,11 +17,18 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.activities.LoginActivity;
+import com.codepath.tsazo.consumer.activities.UserMainActivity;
+import com.codepath.tsazo.consumer.models.Order;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,17 +36,19 @@ import com.parse.SaveCallback;
 public class UserSettingsFragment extends Fragment {
 
     public static final String TAG = "UserSettingsFragment";
-    private Button buttonLogout;
     private EditText editTextName;
     private EditText editTextEmail;
     private EditText editTextAddress;
     private ImageView imageViewProfile;
     private ParseUser currentUser;
     private Button buttonChangeProfile;
+    private Button buttonDriver;
+    private Button buttonLogout;
 
     private static final String KEY_ADDRESS = "address";
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
+    private static final String KEY_IS_DRIVER = "isDriver";
 
     public UserSettingsFragment() {
         // Required empty public constructor
@@ -65,6 +74,7 @@ public class UserSettingsFragment extends Fragment {
         editTextAddress = view.findViewById(R.id.editTextAddress);
         imageViewProfile = view.findViewById(R.id.imageViewProfile);
         buttonChangeProfile = view.findViewById(R.id.buttonChangeProfile);
+        buttonDriver = view.findViewById(R.id.buttonDriver);
 
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
@@ -74,6 +84,9 @@ public class UserSettingsFragment extends Fragment {
 
         // Update profile information
         updateProfile();
+
+        // Switch to driver
+        switchDriver();
 
         // Logout button listener
         logout();
@@ -125,6 +138,28 @@ public class UserSettingsFragment extends Fragment {
                         Toast.makeText(getContext(), "Updated profile!", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        });
+    }
+
+    private void switchDriver() {
+        buttonDriver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentUser.put(KEY_IS_DRIVER, true);
+
+                currentUser.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null){
+                            Log.e(TAG, "Error to switch value to driver mode", e);
+                        }
+                    }
+                });
+
+                Intent i = new Intent(getContext(), DriverMainActivity.class);
+                startActivity(i);
+                getActivity().finish();
             }
         });
     }
