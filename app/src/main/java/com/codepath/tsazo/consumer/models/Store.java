@@ -2,7 +2,8 @@ package com.codepath.tsazo.consumer.models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
+
+// TODO: See if code actually needs this STORE class
 
 @ParseClassName("Store")
 public class Store extends ParseObject {

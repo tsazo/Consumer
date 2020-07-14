@@ -68,6 +68,7 @@ public class UserHomeFragment extends Fragment {
         ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
         query.include(Order.KEY_USER);
         query.include(Order.KEY_STORE);
+        query.include(Order.KEY_DRIVER);
 
         query.whereEqualTo(Order.KEY_USER, ParseUser.getCurrentUser());
 
