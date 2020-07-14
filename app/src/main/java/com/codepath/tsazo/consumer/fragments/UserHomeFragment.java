@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.codepath.tsazo.consumer.adapters.OrdersAdapter;
 import com.codepath.tsazo.consumer.R;
@@ -29,8 +30,10 @@ public class UserHomeFragment extends Fragment {
 
     public static final String TAG = "UserHomeFragment";
     private RecyclerView recyclerViewOrders;
+    private TextView textViewUserAddress;
     protected OrdersAdapter adapter;
     protected List<Order> allOrders;
+    private final String KEY_ADDRESS = "address";
 
     public UserHomeFragment() {
         // Required empty public constructor
@@ -51,9 +54,14 @@ public class UserHomeFragment extends Fragment {
         // Setup any handles to view objects here
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
         recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
+        textViewUserAddress = view.findViewById(R.id.textViewUserAddress);
         allOrders = new ArrayList<>();
         adapter = new OrdersAdapter(getContext(), allOrders);
 
+        ParseUser currentUser = ParseUser.getCurrentUser();
+
+        if(currentUser.getString(KEY_ADDRESS) != null)
+            textViewUserAddress.setText(currentUser.getString(KEY_ADDRESS));
 
         // RecyclerView setup: layout manager and the adapter
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

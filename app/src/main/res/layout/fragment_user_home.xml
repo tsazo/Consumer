@@ -7,7 +7,7 @@
     tools:context=".fragments.UserHomeFragment">
 
     <TextView
-        android:id="@+id/textViewAddress"
+        android:id="@+id/textViewUserAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -17,15 +17,15 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="0dp"
         android:gravity="center_horizontal"
+        android:text="Set Your Delivery Address"
         android:textAllCaps="false"
-        android:textSize="24sp"
-        tools:text="Delivery Address" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/textViewOrdersHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewAddress"
+        android:layout_below="@+id/textViewUserAddress"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"

@@ -37,6 +37,9 @@ public class UserComposeFragment extends Fragment {
     private TextView textViewStoreAddress;
     private TextView textViewPrice;
     private Button buttonPlaceOrder;
+    private float price;
+
+    private final String KEY_ADDRESS = "address";
 
     public UserComposeFragment() {
         // Required empty public constructor
@@ -63,6 +66,10 @@ public class UserComposeFragment extends Fragment {
         textViewPrice = view.findViewById(R.id.textViewPrice);
         buttonPlaceOrder = view.findViewById(R.id.buttonPlaceOrder);
 
+        // TODO: FIX DEFAULT PRICE TO BE DEPENDENT ON HOW FAR THE STORE IS TO THE USER
+        price = 3;
+        textViewPrice.setText("$" + String.valueOf(price)+"0");
+
         // On take picture, open camera (or even camera roll)
         buttonChoose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +78,7 @@ public class UserComposeFragment extends Fragment {
 
                 // TODO: Add intent similar to launchCamera intent in Parstagram to choose a store
                 // Or add something like a parcel?
+
 
             }
         });
@@ -99,10 +107,14 @@ public class UserComposeFragment extends Fragment {
                     return;
                 }
 
-                // TODO: FIX DEFAULT PRICE TO BE DEPENDENT ON HOW FAR THE STORE IS TO THE USER
-                float price = 3;
-
                 ParseUser currentUser = ParseUser.getCurrentUser();
+
+                if(currentUser.getString(KEY_ADDRESS) == null){
+                    Toast.makeText(getContext(), "You don't have a delivery address!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
                 // TODO: Add store chooser to completely finish a proper order request
                 //savePost(orderNumber, currentUser, store, price);
                 savePost(orderNumber, currentUser, price);

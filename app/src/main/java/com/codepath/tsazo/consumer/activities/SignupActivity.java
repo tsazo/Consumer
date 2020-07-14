@@ -107,7 +107,8 @@ public class SignupActivity extends AppCompatActivity {
                 // RESIZE BITMAP, see section below
 
                 // Load the taken image into a preview
-                imageViewProfile.setImageBitmap(takenImage);
+                //imageViewProfile.setImageBitmap(takenImage);
+                Glide.with(this).load(takenImage).fitCenter().circleCrop().into(imageViewProfile);
 
             } else { // Result was a failure
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
