@@ -18,6 +18,30 @@
         android:layout_marginEnd="0dp"
         android:gravity="center_horizontal"
         android:textAllCaps="false"
-        android:textSize="36sp"
+        android:textSize="24sp"
         tools:text="Delivery Address" />
+
+    <TextView
+        android:id="@+id/textViewOrdersHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewAddress"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="0dp"
+        android:gravity="center"
+        android:text="Your Orders"
+        android:textSize="36sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewOrdersHeader"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp" />
 </RelativeLayout>
