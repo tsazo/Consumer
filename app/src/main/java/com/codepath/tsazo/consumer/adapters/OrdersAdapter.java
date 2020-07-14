@@ -72,12 +72,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
             // Bind the post data to the view elements
 
             try {
+                order.fetch();
+                textViewStoreName.setText(order.getStore().getString(KEY_STORE_NAME));
+                textViewStoreAddress.setText(order.getStore().getString(KEY_STORE_ADDRESS));
+
                 Log.i(TAG, "Store name: "+ order.getStore().get(KEY_STORE_NAME));
                 Log.i(TAG, "Store address: "+ order.getStore().get(KEY_STORE_ADDRESS));
-                textViewStoreName.setText(order.getStore().fetchIfNeeded().getString(KEY_STORE_NAME));
-                textViewStoreAddress.setText(order.getStore().fetchIfNeeded().getString(KEY_STORE_ADDRESS));
-            } catch (Exception e){
-                Log.e(TAG, "Cannot fetch store name or address", e);
+            } catch (Exception e) {
+                Log.e(TAG, "Cannot fetch store", e);
             }
 
             textViewOrderNumber.setText(order.getOrderNumber());
