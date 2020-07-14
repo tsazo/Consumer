@@ -12,23 +12,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.activities.OrderDetailsActivity;
+import com.codepath.tsazo.consumer.activities.DriverOrderDetailsActivity;
 import com.codepath.tsazo.consumer.models.Order;
-import com.parse.ParseException;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
-public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder> {
-    private static final String TAG = "OrdersAdapter";
+public class DriverOrdersAdapter extends RecyclerView.Adapter<DriverOrdersAdapter.ViewHolder> {
+    private static final String TAG = "DriverOrdersAdapter";
     private Context context;
     private List<Order> orders;
     private String KEY_STORE_NAME = "storeName";
     private String KEY_STORE_ADDRESS = "address";
     private String KEY_IS_DRIVER = "isDriver";
 
-    public OrdersAdapter(Context context, List<Order> orders) {
+    public DriverOrdersAdapter(Context context, List<Order> orders) {
         this.context = context;
         this.orders = orders;
     }
@@ -37,8 +36,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_order, parent, false);
-        return new ViewHolder(view);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_driver_order, parent, false);
+        return new DriverOrdersAdapter.ViewHolder(view);
     }
 
     @Override
@@ -97,7 +96,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
 
         @Override
         public void onClick(View v) {
-            Log.i(TAG, "Post clicked");
+            Log.i(TAG, "Driver order clicked");
             // Gets item position
             int position = getAdapterPosition();
 
@@ -107,7 +106,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
                 Order order = orders.get(position);
 
                 // Create intent for the new activity
-                Intent intent = new Intent(context, OrderDetailsActivity.class);
+                Intent intent = new Intent(context, DriverOrderDetailsActivity.class);
 
                 // Serialize the post using the parceler, use its short name as a key
                 intent.putExtra(Order.class.getSimpleName(), Parcels.wrap(order));
@@ -118,3 +117,4 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
         }
     }
 }
+

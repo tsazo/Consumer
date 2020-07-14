@@ -11,17 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.adapters.OrdersAdapter;
+import com.codepath.tsazo.consumer.adapters.DriverOrdersAdapter;
 import com.codepath.tsazo.consumer.models.Order;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +28,9 @@ import java.util.List;
 public class DriverHomeFragment extends Fragment {
 
     public static final String TAG = "DriverHomeFragment";
-    private RecyclerView recyclerViewOrders;
+    private RecyclerView recyclerViewDriverOrders;
     private Button buttonOrder;
-    protected OrdersAdapter adapter;
+    protected DriverOrdersAdapter adapter;
     protected List<Order> allOrders;
 
     public DriverHomeFragment() {
@@ -55,15 +51,15 @@ public class DriverHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // Setup any handles to view objects here
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
-        recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
+        recyclerViewDriverOrders = view.findViewById(R.id.recyclerViewDriverOrders);
         buttonOrder = view.findViewById(R.id.buttonOrder);
         allOrders = new ArrayList<>();
-        adapter = new OrdersAdapter(getContext(), allOrders);
+        adapter = new DriverOrdersAdapter(getContext(), allOrders);
 
         // RecyclerView setup: layout manager and the adapter
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerViewOrders.setLayoutManager(layoutManager);
-        recyclerViewOrders.setAdapter(adapter);
+        recyclerViewDriverOrders.setLayoutManager(layoutManager);
+        recyclerViewDriverOrders.setAdapter(adapter);
 
         queryOrders();
     }

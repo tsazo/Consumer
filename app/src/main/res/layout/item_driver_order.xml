@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
-    android:background="#ACE4FD"
-    android:padding="10dp">
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
 
     <TextView
         android:id="@+id/textViewStoreName"
@@ -17,8 +14,9 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
+        android:text="Driver"
         android:textSize="18sp"
-        tools:text="Store Name" />
+        tools:text="Store" />
 
     <TextView
         android:id="@+id/textViewStoreAddress"
@@ -30,7 +28,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/textViewStoreName"
-        tools:text="Address" />
+        android:text="Address" />
 
     <TextView
         android:id="@+id/textViewOrderNumber"
@@ -40,5 +38,6 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="5dp"
-        tools:text="Order #" />
+        tools:text="Number" />
+
 </RelativeLayout>
