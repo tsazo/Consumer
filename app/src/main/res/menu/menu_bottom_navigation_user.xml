@@ -10,12 +10,12 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_create"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/instagram_new_post_outline_24"
         android:title="Create"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_profile"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@drawable/instagram_user_outline_24"
         android:title="Profile"
         app:showAsAction="always" />
 
