@@ -9,10 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.models.Order;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +27,8 @@ import com.parse.ParseUser;
 public class DriverOrderFragment extends Fragment {
 
     public static final String TAG = "DriverOrderFragment";
+    private TextView textViewOrderHeader;
+    private boolean hasActiveOrder;
 
     public DriverOrderFragment() {
         // Required empty public constructor
@@ -38,7 +47,47 @@ public class DriverOrderFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Setup any handles to view objects here
-        // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
+        textViewOrderHeader = view.findViewById(R.id.textViewOrderHeader);
 
+        // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
+        hasActiveOrder();
+
+        // Check if driver has active order
+        if(hasActiveOrder){
+            setValues();
+            return;
+        }
+
+        textViewOrderHeader.setText("No Current Order");
+    }
+
+    // Sets all the values for the current order if there is one.
+    private void setValues() {
+        textViewOrderHeader.setText("Current Order");
+    }
+
+    // checks if the driver has an active order to prevent them from switching accounts/logging off
+    private void hasActiveOrder() {
+        ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
+        query.include(Order.KEY_DRIVER);
+
+        query.whereEqualTo(Order.KEY_DRIVER, ParseUser.getCurrentUser());
+
+        query.findInBackground(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> orders, ParseException e) {
+                if(e != null){
+                    Log.e(TAG, "Issue with getting orders", e);
+                    return;
+                }
+
+                if(!orders.isEmpty()){
+                    hasActiveOrder = true;
+                    return;
+                }
+
+                hasActiveOrder = false;
+            }
+        });
     }
 }

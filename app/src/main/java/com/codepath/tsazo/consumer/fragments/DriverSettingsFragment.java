@@ -44,6 +44,7 @@ public class DriverSettingsFragment extends Fragment {
     private Button buttonChangeProfile;
     private Button buttonUser;
     private Button buttonLogout;
+    private boolean hasActiveOrder;
 
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
@@ -84,60 +85,15 @@ public class DriverSettingsFragment extends Fragment {
         updateProfile();
 
         // Switch to user
-        switchUser();
+        goUserHome();
 
         // Logout button listener
         logout();
     }
 
-    private void switchUser() {
-        buttonUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
-                query.include(Order.KEY_DRIVER);
-
-                query.whereEqualTo(Order.KEY_DRIVER, ParseUser.getCurrentUser());
-
-                query.findInBackground(new FindCallback<Order>() {
-                    @Override
-                    public void done(List<Order> orders, ParseException e) {
-                        if(e != null){
-                            Log.e(TAG, "Issue with getting orders", e);
-                            return;
-                        }
-
-                        if(!orders.isEmpty()){
-                            Toast.makeText(getContext(), "You have an active order!", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        goUserHome();
-                    }
-                });
-            }
-        });
-    }
-
-    // Go to user activity
-    private void goUserHome() {
-        currentUser.put(KEY_IS_DRIVER, false);
-
-        currentUser.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if(e != null){
-                    Log.e(TAG, "Error to switch value to user mode", e);
-                }
-            }
-        });
-
-        Intent i = new Intent(getContext(), UserMainActivity.class);
-        startActivity(i);
-        getActivity().finish();
-    }
-
     private void setValues() {
+        hasActiveOrder();
+
         editTextName.setText(currentUser.getString(KEY_NAME));
         editTextEmail.setText(currentUser.getEmail());
 
@@ -153,6 +109,62 @@ public class DriverSettingsFragment extends Fragment {
                     .circleCrop()
                     .into(imageViewProfile);
         }
+
+    }
+
+    // checks if the driver has an active order to prevent them from switching accounts/logging off
+    private void hasActiveOrder() {
+        ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
+        query.include(Order.KEY_DRIVER);
+
+        query.whereEqualTo(Order.KEY_DRIVER, ParseUser.getCurrentUser());
+
+        query.findInBackground(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> orders, ParseException e) {
+                if(e != null){
+                    Log.e(TAG, "Issue with getting orders", e);
+                    return;
+                }
+
+                if(!orders.isEmpty()){
+                    hasActiveOrder = true;
+                    return;
+                }
+
+                hasActiveOrder = false;
+            }
+        });
+    }
+
+    // Go to user activity
+    private void goUserHome() {
+        if(hasActiveOrder){
+            Toast.makeText(getContext(), "You have an active order!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        buttonUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                currentUser.put(KEY_IS_DRIVER, false);
+
+                currentUser.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null){
+                            Log.e(TAG, "Error to switch value to user mode", e);
+                        }
+                    }
+                });
+
+                Intent i = new Intent(getContext(), UserMainActivity.class);
+                startActivity(i);
+                getActivity().finish();
+            }
+        });
+
     }
 
     // Set listener to update profile
@@ -180,6 +192,11 @@ public class DriverSettingsFragment extends Fragment {
 
     // Logout button listener
     private void logout() {
+        if(hasActiveOrder){
+            Toast.makeText(getContext(), "You have an active order!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

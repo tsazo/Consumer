@@ -2,19 +2,25 @@ package com.codepath.tsazo.consumer.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.adapters.DriverOrdersAdapter;
 import com.codepath.tsazo.consumer.models.Order;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -32,6 +38,9 @@ public class DriverHomeFragment extends Fragment {
     private Button buttonOrder;
     protected DriverOrdersAdapter adapter;
     protected List<Order> allOrders;
+
+    private FragmentManager fragmentManager;
+    private BottomNavigationView bottomNavigationViewDriver;
 
     public DriverHomeFragment() {
         // Required empty public constructor
@@ -51,6 +60,9 @@ public class DriverHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // Setup any handles to view objects here
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
+        fragmentManager = getActivity().getSupportFragmentManager();
+        bottomNavigationViewDriver = getActivity().findViewById(R.id.bottom_navigation_driver);
+
         recyclerViewDriverOrders = view.findViewById(R.id.recyclerViewDriverOrders);
         buttonOrder = view.findViewById(R.id.buttonOrder);
         allOrders = new ArrayList<>();
@@ -61,7 +73,21 @@ public class DriverHomeFragment extends Fragment {
         recyclerViewDriverOrders.setLayoutManager(layoutManager);
         recyclerViewDriverOrders.setAdapter(adapter);
 
+        buttonOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goOrderFragment();
+            }
+        });
+
         queryOrders();
+    }
+
+    // Goes to order fragment
+    private void goOrderFragment() {
+        Fragment fragment = new DriverOrderFragment();
+        bottomNavigationViewDriver.setSelectedItemId(R.id.action_order);
+        fragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
     }
 
     protected void queryOrders() {

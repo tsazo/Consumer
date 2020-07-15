@@ -75,7 +75,12 @@ public class SignupActivity extends AppCompatActivity {
                 String email = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
 
-                signupUser(name, email, password);
+                try {
+                    signupUser(name, email, password);
+                } catch (Exception e) {
+                    Toast.makeText(SignupActivity.this, "Please fill out all fields before signing up.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
