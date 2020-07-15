@@ -34,11 +34,14 @@ import java.io.IOException;
 public class SignupActivity extends AppCompatActivity {
 
     public static final String TAG = "SignupActivity";
+    private EditText editTextSignupName;
     private EditText editTextEmail;
     private EditText editTextPassword;
     private Button buttonUserSignup;
     private ImageView imageViewProfile;
+
     private final String KEY_PICTURE = "profilePicture";
+    private final String KEY_NAME = "name";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
     private File photoFile;
@@ -48,6 +51,7 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        editTextSignupName = findViewById(R.id.editTextSignupName);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextEmail = findViewById(R.id.editTextEmail);
         buttonUserSignup = findViewById(R.id.buttonUserSignup);
@@ -67,10 +71,11 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "Signup button clicked");
+                String name = editTextSignupName.getText().toString();
                 String email = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
 
-                signupUser(email, password);
+                signupUser(name, email, password);
             }
         });
     }
@@ -133,13 +138,11 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     // Checks if the user has entered in signup credentials, if so, user is taken to the MainActivity
-    private void signupUser(String email, String password) {
+    private void signupUser(String name, String email, String password) {
         Log.i(TAG, "Attempting to signup user: " + email);
 
         // Create the ParseUser
         final ParseUser user = new ParseUser();
-        // TODO: Fix bug
-        final ParseFile parseImage = new ParseFile(photoFile);
 
         // Set core properties
         if(email == "" || password == "") {
@@ -153,22 +156,26 @@ public class SignupActivity extends AppCompatActivity {
         user.setEmail(email);
 
         // Set custom properties
+        user.put(KEY_NAME, name);
+
+        // TODO: Fix bug
+        final ParseFile parseImage = new ParseFile(photoFile);
 
         // Call below signals to save the parseImage in the background, however the default image is still being used
         // TODO: Fix this bug such that the user can upload a taken photo properly
-//        parseImage.saveInBackground(new SaveCallback() {
-//            public void done(ParseException e) {
-//                // If successful add file to user and signUpInBackground
-//                if(null == e){
-//                    Log.i(TAG, "Saved image to parse");
-//                    Log.i(TAG, "The value of parseImage is: "+ parseImage);
-//                }
-//            }
-//        });
-//
-//        if(parseImage != null){
-//            user.put(KEY_PICTURE, parseImage);
-//        }
+        parseImage.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+                // If successful add file to user and signUpInBackground
+                if(e != null){
+                    Log.e(TAG, "Error saving image to Parse", e);
+                }
+
+                Log.i(TAG, "Saved image to parse");
+                Log.i(TAG, "The value of parseImage is: "+ parseImage);
+                user.put(KEY_PICTURE, parseImage);
+                Log.i(TAG, "Profile picture? " + user.getParseFile(KEY_PICTURE));
+            }
+        });
 
 
         // Invoke signUpInBackground
@@ -179,6 +186,8 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(SignupActivity.this, "Issue with signup!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                user.saveInBackground();
 
                 goLoginActivity();
                 Toast.makeText(SignupActivity.this, "Successfully signed up!", Toast.LENGTH_SHORT).show();

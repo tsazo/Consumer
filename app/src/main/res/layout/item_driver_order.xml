@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:background="@color/colorPrimaryDark">
+    android:background="@color/colorPrimaryDark"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/textViewStoreName"
@@ -14,9 +15,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
-        android:text="Driver"
-        android:textSize="18sp"
-        tools:text="Store" />
+        android:text="Store"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textViewStoreAddress"
@@ -28,6 +28,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/textViewStoreName"
+        android:gravity="center"
         android:text="Address" />
 
     <TextView

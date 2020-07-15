@@ -36,8 +36,8 @@ import java.util.List;
 public class UserSettingsFragment extends Fragment {
 
     public static final String TAG = "UserSettingsFragment";
-    private EditText editTextName;
-    private EditText editTextEmail;
+    private EditText editTextUserName;
+    private EditText editTextUserEmail;
     private EditText editTextAddress;
     private ImageView imageViewProfile;
     private ParseUser currentUser;
@@ -69,8 +69,8 @@ public class UserSettingsFragment extends Fragment {
         // Setup any handles to view objects here
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
         buttonLogout = view.findViewById(R.id.buttonLogout);
-        editTextName = view.findViewById(R.id.editTextName);
-        editTextEmail = view.findViewById(R.id.editTextEmail);
+        editTextUserName = view.findViewById(R.id.editTextUserName);
+        editTextUserEmail = view.findViewById(R.id.editTextUserEmail);
         editTextAddress = view.findViewById(R.id.editTextAddress);
         imageViewProfile = view.findViewById(R.id.imageViewProfile);
         buttonChangeProfile = view.findViewById(R.id.buttonChangeProfile);
@@ -93,10 +93,8 @@ public class UserSettingsFragment extends Fragment {
     }
 
     private void setValues() {
-        editTextName.setText(currentUser.getString(KEY_NAME));
-        editTextEmail.setText(currentUser.getEmail());
-
-        Log.i(TAG, currentUser.getString(KEY_ADDRESS));
+        editTextUserName.setText(currentUser.getString(KEY_NAME));
+        editTextUserEmail.setText(currentUser.getEmail());
 
         if(currentUser.getString(KEY_ADDRESS) != null)
             editTextAddress.setText(currentUser.getString(KEY_ADDRESS));
@@ -120,8 +118,8 @@ public class UserSettingsFragment extends Fragment {
         buttonChangeProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentUser.setUsername(editTextName.getText().toString());
-                currentUser.setEmail(editTextEmail.getText().toString());
+                currentUser.setUsername(editTextUserName.getText().toString());
+                currentUser.setEmail(editTextUserEmail.getText().toString());
 
                 if(editTextAddress.getText().toString() != null)
                     currentUser.put(KEY_ADDRESS, editTextAddress.getText().toString());

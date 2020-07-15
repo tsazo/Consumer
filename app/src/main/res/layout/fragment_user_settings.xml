@@ -16,7 +16,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <EditText
-        android:id="@+id/editTextName"
+        android:id="@+id/editTextUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageViewProfile"
@@ -25,10 +25,10 @@
         android:hint="Name" />
 
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextUserEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editTextName"
+        android:layout_below="@+id/editTextUserName"
         android:layout_marginTop="10dp"
         android:ems="10"
         android:hint="Email" />
@@ -37,7 +37,7 @@
         android:id="@+id/editTextAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editTextEmail"
+        android:layout_below="@+id/editTextUserEmail"
         android:layout_marginTop="10dp"
         android:ems="10"
         android:hint="Address" />
