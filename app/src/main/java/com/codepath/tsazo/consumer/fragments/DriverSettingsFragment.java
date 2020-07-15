@@ -78,6 +78,11 @@ public class DriverSettingsFragment extends Fragment {
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
 
+        Log.i(TAG, "calling hasActiveOrder()");
+        hasActiveOrder();
+        Log.i(TAG, "done running hasActiveOrder()");
+        Log.i(TAG, String.valueOf(hasActiveOrder));
+
         // Set values
         setValues();
 
@@ -92,8 +97,6 @@ public class DriverSettingsFragment extends Fragment {
     }
 
     private void setValues() {
-        hasActiveOrder();
-
         editTextName.setText(currentUser.getString(KEY_NAME));
         editTextEmail.setText(currentUser.getEmail());
 
@@ -101,7 +104,6 @@ public class DriverSettingsFragment extends Fragment {
 
         if(image != null) {
             // Binds image to ViewHolder with rounded corners
-            Log.i(TAG, String.valueOf(currentUser.getParseFile(KEY_PROFILE_PIC).getUrl()));
 
             Glide.with(getContext())
                     .load(currentUser.getParseFile(KEY_PROFILE_PIC).getUrl())
@@ -114,10 +116,12 @@ public class DriverSettingsFragment extends Fragment {
 
     // checks if the driver has an active order to prevent them from switching accounts/logging off
     private void hasActiveOrder() {
+        Log.i(TAG, "running hasActiveOrder()");
+
         ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
         query.include(Order.KEY_DRIVER);
 
-        query.whereEqualTo(Order.KEY_DRIVER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Order.KEY_DRIVER, currentUser);
 
         query.findInBackground(new FindCallback<Order>() {
             @Override
@@ -127,26 +131,25 @@ public class DriverSettingsFragment extends Fragment {
                     return;
                 }
 
-                if(!orders.isEmpty()){
-                    hasActiveOrder = true;
-                    return;
-                }
+                Log.i(TAG, "Driver's orders: "+ orders);
+                Log.i(TAG, "Driver's orders: "+ !orders.isEmpty());
 
-                hasActiveOrder = false;
+                hasActiveOrder = !orders.isEmpty();
+
+                Log.i(TAG, "hasActiveOrder: " + hasActiveOrder);
             }
         });
     }
 
     // Go to user activity
     private void goUserHome() {
-        if(hasActiveOrder){
-            Toast.makeText(getContext(), "You have an active order!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         buttonUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(hasActiveOrder){
+                    Toast.makeText(getContext(), "You have an active order!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 currentUser.put(KEY_IS_DRIVER, false);
 
@@ -192,14 +195,14 @@ public class DriverSettingsFragment extends Fragment {
 
     // Logout button listener
     private void logout() {
-        if(hasActiveOrder){
-            Toast.makeText(getContext(), "You have an active order!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(hasActiveOrder){
+                    Toast.makeText(getContext(), "You have an active order!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Log.i(TAG, "User logging out!");
 
                 ParseUser.logOut();

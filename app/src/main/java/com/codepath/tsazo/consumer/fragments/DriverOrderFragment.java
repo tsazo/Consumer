@@ -27,6 +27,7 @@ import java.util.List;
 public class DriverOrderFragment extends Fragment {
 
     public static final String TAG = "DriverOrderFragment";
+    private ParseUser currentUser;
     private TextView textViewOrderHeader;
     private boolean hasActiveOrder;
 
@@ -49,29 +50,14 @@ public class DriverOrderFragment extends Fragment {
         // Setup any handles to view objects here
         textViewOrderHeader = view.findViewById(R.id.textViewOrderHeader);
 
+        // Gets the person who's logged in
+        currentUser = ParseUser.getCurrentUser();
+
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
-        hasActiveOrder();
-
-        // Check if driver has active order
-        if(hasActiveOrder){
-            setValues();
-            return;
-        }
-
-        textViewOrderHeader.setText("No Current Order");
-    }
-
-    // Sets all the values for the current order if there is one.
-    private void setValues() {
-        textViewOrderHeader.setText("Current Order");
-    }
-
-    // checks if the driver has an active order to prevent them from switching accounts/logging off
-    private void hasActiveOrder() {
         ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
         query.include(Order.KEY_DRIVER);
 
-        query.whereEqualTo(Order.KEY_DRIVER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Order.KEY_DRIVER, currentUser);
 
         query.findInBackground(new FindCallback<Order>() {
             @Override
@@ -81,13 +67,23 @@ public class DriverOrderFragment extends Fragment {
                     return;
                 }
 
-                if(!orders.isEmpty()){
-                    hasActiveOrder = true;
-                    return;
-                }
+                Log.i(TAG, "!orders.isEmpty(): " + !orders.isEmpty());
 
-                hasActiveOrder = false;
+                hasActiveOrder = !orders.isEmpty();
+                // Check if driver has active order
+
+                if(hasActiveOrder){
+                    setValues();
+                } else {
+                    textViewOrderHeader.setText("No Current Order");
+                }
             }
         });
+
+    }
+
+    // Sets all the values for the current order if there is one.
+    private void setValues() {
+        textViewOrderHeader.setText("Current Order");
     }
 }

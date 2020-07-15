@@ -2,7 +2,6 @@ package com.codepath.tsazo.consumer.fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,16 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.adapters.DriverOrdersAdapter;
 import com.codepath.tsazo.consumer.models.Order;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -60,6 +56,7 @@ public class DriverHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // Setup any handles to view objects here
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
+
         fragmentManager = getActivity().getSupportFragmentManager();
         bottomNavigationViewDriver = getActivity().findViewById(R.id.bottom_navigation_driver);
 
