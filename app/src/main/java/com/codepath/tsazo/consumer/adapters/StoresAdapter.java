@@ -3,20 +3,18 @@ package com.codepath.tsazo.consumer.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.activities.StoreActivity;
-import com.codepath.tsazo.consumer.activities.UserMainActivity;
 import com.codepath.tsazo.consumer.fragments.UserComposeFragment;
 import com.codepath.tsazo.consumer.models.Store;
 
@@ -28,10 +26,10 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
 
     public static final String TAG = "StoresAdapter";
 
-    Context context;
-    List<Store> stores;
+    private Context context;
+    private List<Store> stores;
 
-    public StoresAdapter(Context context, List<Store> stores){
+    public StoresAdapter(Context context, List<Store> stores) {
         this.context = context;
         this.stores = stores;
     }
@@ -50,10 +48,20 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Get the data at position
-        Store store = stores.get(position);
+        final Store store = stores.get(position);
 
-        // Bind the tweet with view holder
+        // Bind the store with view holder
         holder.bind(store);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra(Store.class.getSimpleName(), Parcels.wrap(store));
+//                setResult(RESULT_OK, intent);
+//                finish();
+            }
+        });
     }
 
     @Override
@@ -82,6 +90,7 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
         //ImageView imageViewMedia;
         TextView textViewName;
         TextView textViewLocation;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -112,40 +121,32 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
         }
 
         // when user clicks on a row, send the store information to the UserComposeFragment
-        @Override
-        public void onClick(View view) {
-            // Gets the item position
-            int position = getAdapterPosition();
-
-            Log.i(TAG, "Position of store: " + String.valueOf(position));
-
-            // make sure the position is valid, i.e. exists in the view
-            if (position != RecyclerView.NO_POSITION){
-
-                // get the movie at the position, this won't work if the class is static
-                Store store = stores.get(position);
-
-                Log.i(TAG, "Store: "+ store);
-
-                // create intent for the new activity
-                Bundle bundle = new Bundle();
-                bundle.putString("name", store.name);
-                bundle.putString("lng", store.lng);
-                bundle.putString("lat", store.lat);
-
-                UserComposeFragment userComposeFragment = new UserComposeFragment();
-                userComposeFragment.setArguments(bundle);
-
-                //Log.i(TAG, "intent: "+intent);
-
-                // serialize the movie using parceler, use its short nasme as a key
-                // First string is the name, second string is the value
-                //intent.putExtra(Store.class.getSimpleName(), Parcels.wrap(store));
-
-                // show the activity
-                //context.startActivity(intent);
-            }
-        }
+//        @Override
+//        public void onClick(View view) {
+//            // Gets the item position
+//            int position = getAdapterPosition();
+//
+//            Log.i(TAG, "Position of store: " + position);
+//
+//            // make sure the position is valid, i.e. exists in the view
+//            if (position != RecyclerView.NO_POSITION){
+//
+//                // get the store at the position, this won't work if the class is static
+//                Store store = stores.get(position);
+//
+//                Log.i(TAG, "Store: "+ store);
+//
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelable("store", (Parcelable) store);
+//
+//
+//                // create intent for the new activity
+////                intent = new Intent();
+////                intent.putExtra(Store.class.getSimpleName(), Parcels.wrap(store));
+////                Log.i(TAG, "intent: " + intent);
+//
+//            }
+//        }
 
     }
 }

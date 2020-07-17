@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -21,6 +23,7 @@ import com.parse.ParseUser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,4 +101,17 @@ public class StoreActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // Necessary for "saving" like information when people go back to posts screen
+        Log.i(TAG, "Onbackpressed and getIntent(): " + getIntent());
+
+        if(getIntent() != null){
+            setResult(RESULT_OK, getIntent());
+            finish();
+            return;
+        }
+
+        Toast.makeText(this, "Please choose a store.", Toast.LENGTH_SHORT).show();
+    }
 }

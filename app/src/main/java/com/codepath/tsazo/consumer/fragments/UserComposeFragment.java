@@ -6,31 +6,26 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.activities.StoreActivity;
 import com.codepath.tsazo.consumer.models.Order;
 import com.codepath.tsazo.consumer.models.Store;
 import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
 
-import java.io.File;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,8 +42,6 @@ public class UserComposeFragment extends Fragment {
     private float price;
 
     private final String KEY_ADDRESS = "address";
-    public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 20;
-
 
     public UserComposeFragment() {
         // Required empty public constructor
@@ -77,7 +70,7 @@ public class UserComposeFragment extends Fragment {
 
         // TODO: FIX DEFAULT PRICE TO BE DEPENDENT ON HOW FAR THE STORE IS TO THE USER
         price = 3;
-        textViewPrice.setText("$" + String.valueOf(price)+"0");
+        textViewPrice.setText("$" + price + "0");
 
         // Choose store
         chooseStore();
@@ -97,7 +90,6 @@ public class UserComposeFragment extends Fragment {
                 // TODO: Add intent similar to launchCamera intent in Parstagram to choose a store
                 // Or add something like a parcel?
                 Intent intent = new Intent(getActivity(), StoreActivity.class);
-                Log.i(TAG ,"intent successful: " + intent);
 
                 startActivity(intent);
             }
@@ -145,22 +137,18 @@ public class UserComposeFragment extends Fragment {
         });
     }
 
-    // Time to handle the result of the sub-activity
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        Log.i(TAG, "onActivityResult");
-//
-//        // Get data from the intent (tweet)
-//        Store store = Parcels.unwrap(data.getParcelableExtra("store"));
-//
-//        textViewStoreName.setText(store.getName());
-//        textViewStoreAddress.setText(store.getAddress());
-//
-//        // REQUEST_CODE is defined above
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
+    // Handle the result of the sub-activity
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.i(TAG, "Returned to userComposeFragment from Store details view");
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            Store store = Parcels.unwrap(data.getParcelableExtra(Store.class.getSimpleName()));
+            textViewStoreName.setText(store.name);
+            textViewStoreAddress.setText(store.lat + ", " + store.lng);
+        }
+    }
 
     // Save the order request to Parse
     private void savePost(String orderNumber, ParseUser currentUser, float price) {
