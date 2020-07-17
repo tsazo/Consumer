@@ -1,7 +1,10 @@
 package com.codepath.tsazo.consumer.fragments;
 
+import android.Manifest;
+import android.location.Location;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,17 +18,27 @@ import android.widget.TextView;
 import com.codepath.tsazo.consumer.adapters.OrdersAdapter;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.models.Order;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
 /**
  * A simple {@link Fragment} subclass.
  */
+@RuntimePermissions
 public class UserHomeFragment extends Fragment {
 
     public static final String TAG = "UserHomeFragment";
@@ -34,6 +47,13 @@ public class UserHomeFragment extends Fragment {
     protected OrdersAdapter adapter;
     protected List<Order> allOrders;
     private final String KEY_ADDRESS = "address";
+
+    //Google Maps fields
+    private ParseUser currentUser;
+    private UserHomeFragment fragment;
+    private Location mCurrentLocation;
+    //private Location location;
+    private final static String KEY_LOCATION = "location";
 
     public UserHomeFragment() {
         // Required empty public constructor
@@ -58,7 +78,10 @@ public class UserHomeFragment extends Fragment {
         allOrders = new ArrayList<>();
         adapter = new OrdersAdapter(getContext(), allOrders);
 
-        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseUser.getCurrentUser();
+        fragment = this;
+
+        UserHomeFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(fragment);
 
         if(currentUser.getString(KEY_ADDRESS) != null)
             textViewUserAddress.setText(currentUser.getString(KEY_ADDRESS));
@@ -97,5 +120,46 @@ public class UserHomeFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    // Google Maps, retrieve location
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        UserHomeFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    public void getMyLocation() {
+        // Access users current location
+        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
+        locationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            Log.i(TAG, "Location: " + location.toString());
+                            mCurrentLocation = location;
+                            ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+
+                            currentUser.put(KEY_LOCATION, geoPoint);
+                            currentUser.saveInBackground();
+                            //getLocationFromCoords(location.getLatitude(), location.getLongitude());
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Error trying to get last GPS location");
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
+        super.onSaveInstanceState(savedInstanceState);
     }
 }

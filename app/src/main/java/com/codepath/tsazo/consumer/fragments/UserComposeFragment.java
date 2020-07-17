@@ -1,9 +1,12 @@
 package com.codepath.tsazo.consumer.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.activities.DriverMainActivity;
+import com.codepath.tsazo.consumer.activities.StoreActivity;
 import com.codepath.tsazo.consumer.models.Order;
 import com.codepath.tsazo.consumer.models.Store;
 import com.parse.ParseException;
@@ -22,6 +27,8 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import org.parceler.Parcels;
 
 import java.io.File;
 
@@ -40,6 +47,8 @@ public class UserComposeFragment extends Fragment {
     private float price;
 
     private final String KEY_ADDRESS = "address";
+    public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 20;
+
 
     public UserComposeFragment() {
         // Required empty public constructor
@@ -70,7 +79,16 @@ public class UserComposeFragment extends Fragment {
         price = 3;
         textViewPrice.setText("$" + String.valueOf(price)+"0");
 
-        // On take picture, open camera (or even camera roll)
+        // Choose store
+        chooseStore();
+
+        // Place order
+        placeOrder();
+    }
+
+    // On choose store, open StoreActivity to retrieve store information
+    private void chooseStore() {
+        // On choose store, open StoreActivity to retrieve store information
         buttonChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,12 +96,16 @@ public class UserComposeFragment extends Fragment {
 
                 // TODO: Add intent similar to launchCamera intent in Parstagram to choose a store
                 // Or add something like a parcel?
+                Intent intent = new Intent(getActivity(), StoreActivity.class);
+                Log.i(TAG ,"intent successful: " + intent);
 
-
+                startActivity(intent);
             }
         });
+    }
 
-        // On place order, post order
+    // On place order, post order
+    private void placeOrder() {
         buttonPlaceOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,6 +144,23 @@ public class UserComposeFragment extends Fragment {
 
         });
     }
+
+    // Time to handle the result of the sub-activity
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        Log.i(TAG, "onActivityResult");
+//
+//        // Get data from the intent (tweet)
+//        Store store = Parcels.unwrap(data.getParcelableExtra("store"));
+//
+//        textViewStoreName.setText(store.getName());
+//        textViewStoreAddress.setText(store.getAddress());
+//
+//        // REQUEST_CODE is defined above
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
     // Save the order request to Parse
     private void savePost(String orderNumber, ParseUser currentUser, float price) {
