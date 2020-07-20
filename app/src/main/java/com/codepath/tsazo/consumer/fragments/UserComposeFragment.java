@@ -88,10 +88,6 @@ public class UserComposeFragment extends Fragment {
         buttonChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "Choose store button clicked");
-
-                // TODO: Add intent similar to launchCamera intent in Parstagram to choose a store
-                // Or add something like a parcel?
                 Intent intent = new Intent(getActivity(), StoreActivity.class);
 
                 startActivity(intent);
@@ -140,54 +136,11 @@ public class UserComposeFragment extends Fragment {
         });
     }
 
-    // Handle the result of the sub-activity
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.i(TAG, "onstart!!!!!!");
-
-        // implement the interface before you create the adapter. and pass it in the adapters constructor
-        // getActivity().getIntent().getExtras()
-        if (getArguments() != null) {
-            Log.i(TAG, "getArguments...:" + getArguments().getParcelable("STORE_KEY_STRING"));
-            Store store = (Store) Parcels.unwrap(getActivity().getIntent().getExtras().getParcelable("STORE_KEY_STRING"));
-            textViewStoreName.setText(store.name);
-            textViewStoreAddress.setText(store.lat + ", " + store.lng);
-        }
-
-//        if(getArguments() != null){
-//            Store store = (Store) Parcels.unwrap(getArguments().getParcelable("STORE_KEY_STRING"));
-//            Log.i(TAG, "store: " + store);
-//
-//            textViewStoreName.setText(store.name);
-//            textViewStoreAddress.setText(store.lat + ", " + store.lng);
-//        }
-//        Store store = (Store) Parcels.unwrap(getArguments().getParcelable("STORE_KEY_STRING"));
-//        Log.i(TAG, "store: " + store);
-//        if (store != null){
-//            textViewStoreName.setText(store.name);
-//            textViewStoreAddress.setText(store.lat + ", " + store.lng);
-//        }
-
-    }
-
+    // Sets the values of the stores once user selects a store in StoreActivity
     public void setStore(String name, String lat, String lng){
         textViewStoreName.setText(name);
         textViewStoreAddress.setText(lat + ", " + lng);
     }
-
-//    @Override
-//    public void onResume(int requestCode, int resultCode, @Nullable Intent data) {
-//        Log.i(TAG, "Returned to userComposeFragment from Store details view");
-//        super.onResume(requestCode, resultCode, data);
-//
-//        if (resultCode == RESULT_OK) {
-//            Store store = Parcels.unwrap(data.getParcelableExtra(Store.class.getSimpleName()));
-//            textViewStoreName.setText(store.name);
-//            textViewStoreAddress.setText(store.lat + ", " + store.lng);
-//        }
-//    }
 
     // Save the order request to Parse
     private void savePost(String orderNumber, ParseUser currentUser, float price) {

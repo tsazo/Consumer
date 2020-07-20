@@ -1,38 +1,28 @@
 package com.codepath.tsazo.consumer.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.adapters.OnStoreSelectedListener;
 import com.codepath.tsazo.consumer.adapters.StoresAdapter;
 import com.codepath.tsazo.consumer.fragments.UserComposeFragment;
 import com.codepath.tsazo.consumer.models.Store;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Headers;
-import permissions.dispatcher.NeedsPermission;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 

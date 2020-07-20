@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.activities.StoreActivity;
 import com.codepath.tsazo.consumer.models.Store;
 
 import java.util.List;
@@ -66,8 +65,6 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
         return stores.size();
     }
 
-
-    /* Within the RecyclerView.Adapter class to implement the pull-to-refresh action */
     // Clean all elements of the recycler
     public void clear() {
         stores.clear();
@@ -82,7 +79,6 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
     }
 
     // Define a ViewHolder
-//    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         //ImageView imageViewMedia;
@@ -96,8 +92,6 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewLocation = itemView.findViewById(R.id.textViewLocation);
             //imageViewMedia = itemView.findViewById(R.id.imageViewMedia);
-
-            //itemView.setOnClickListener(this);
         }
 
         // Take each attribute of the tweet and use those values to bind them to the screen
@@ -105,25 +99,5 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
             textViewName.setText(store.name);
             textViewLocation.setText(store.lat + "," + store.lng);
         }
-
-        // when user clicks on a row, send the store information to the UserComposeFragment
-//        @Override
-//        public void onClick(View view) {
-//            // Gets the item position
-//            int position = getAdapterPosition();
-//
-//            Log.i(TAG, "Position of store: " + position);
-//
-//            // make sure the position is valid, i.e. exists in the view
-//            if (position != RecyclerView.NO_POSITION){
-//
-//                // get the store at the position, this won't work if the class is static
-//                Store store = stores.get(position);
-//
-//                Log.i(TAG, "Store: "+ store);
-//
-//            }
-//        }
-
     }
 }
