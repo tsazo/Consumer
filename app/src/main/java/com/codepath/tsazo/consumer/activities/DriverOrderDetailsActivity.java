@@ -4,21 +4,29 @@ import android.Manifest;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.models.Order;
+import com.codepath.tsazo.consumer.models.ParseStore;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import okhttp3.Headers;
 import permissions.dispatcher.NeedsPermission;
@@ -30,6 +38,12 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 public class DriverOrderDetailsActivity extends AppCompatActivity {
 
     private static final String TAG = "DriverOrderDetails";
+
+    private TextView textViewPrice;
+    private TextView textViewStoreName;
+    private TextView textViewLocation;
+    private Button buttonAcceptOrder;
+    private Order order;
     private SupportMapFragment mapFragment;
     private String FIND_PLACE_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=";
     private GoogleMap driverMap;
@@ -37,8 +51,9 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
     public static JSONObject location;
     private String address;
 
+    private final static String KEY_STORE_NAME = "storeName";
     private final static String KEY_LOCATION = "location";
-
+    private final static String KEY_HAS_ORDER = "hasOrder";
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -51,6 +66,9 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_order_details);
 
+        setValues();
+
+        // Set map values
         if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
             // Since KEY_LOCATION was found in the Bundle, we can be sure that mCurrentLocation
             // is not null.
@@ -68,6 +86,36 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
         }
+
+        acceptOrder();
+    }
+
+    // Accepts the order for the driver to complete
+    private void acceptOrder() {
+        buttonAcceptOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                order.setDriver(ParseUser.getCurrentUser());
+                order.saveInBackground();
+                ParseUser.getCurrentUser().put(KEY_HAS_ORDER, true);
+                Toast.makeText(DriverOrderDetailsActivity.this, "Accepted Order!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+    }
+
+    // Set values for the textViews and buttons
+    private void setValues() {
+        textViewPrice = findViewById(R.id.textViewPrice);
+        textViewStoreName = findViewById(R.id.textViewStoreName);
+        textViewLocation = findViewById(R.id.textViewLocation);
+        buttonAcceptOrder = findViewById(R.id.buttonAcceptOrder);
+
+        order = (Order) Parcels.unwrap(getIntent().getParcelableExtra(Order.class.getSimpleName()));
+
+        textViewPrice.setText("$" + order.getPrice());
+        textViewStoreName.setText(order.getStore().getName());
+        textViewLocation.setText(order.getStore().getAddress());
     }
 
     protected void loadMap(GoogleMap googleMap) {

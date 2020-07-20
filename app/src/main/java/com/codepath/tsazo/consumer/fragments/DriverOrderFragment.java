@@ -31,6 +31,8 @@ public class DriverOrderFragment extends Fragment {
     private TextView textViewOrderHeader;
     private boolean hasActiveOrder;
 
+    private final static String KEY_HAS_ORDER = "hasOrder";
+
     public DriverOrderFragment() {
         // Required empty public constructor
     }
@@ -53,37 +55,19 @@ public class DriverOrderFragment extends Fragment {
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
 
-        // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
-        ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
-        query.include(Order.KEY_DRIVER);
+        hasActiveOrder = currentUser.getBoolean(KEY_HAS_ORDER);
 
-        query.whereEqualTo(Order.KEY_DRIVER, currentUser);
-
-        query.findInBackground(new FindCallback<Order>() {
-            @Override
-            public void done(List<Order> orders, ParseException e) {
-                if(e != null){
-                    Log.e(TAG, "Issue with getting orders", e);
-                    return;
-                }
-
-                Log.i(TAG, "!orders.isEmpty(): " + !orders.isEmpty());
-
-                hasActiveOrder = !orders.isEmpty();
-                // Check if driver has active order
-
-                if(hasActiveOrder){
-                    setValues();
-                } else {
-                    textViewOrderHeader.setText("No Current Order");
-                }
-            }
-        });
+        if(hasActiveOrder){
+            setValues();
+        } else {
+            textViewOrderHeader.setText("No Current Order");
+        }
 
     }
 
     // Sets all the values for the current order if there is one.
     private void setValues() {
         textViewOrderHeader.setText("Current Order");
+
     }
 }

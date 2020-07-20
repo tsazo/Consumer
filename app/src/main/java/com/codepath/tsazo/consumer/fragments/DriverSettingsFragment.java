@@ -49,6 +49,7 @@ public class DriverSettingsFragment extends Fragment {
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
     private static final String KEY_IS_DRIVER = "isDriver";
+    private static final String KEY_HAS_ORDER = "hasOrder";
 
     public DriverSettingsFragment() {
         // Required empty public constructor
@@ -79,7 +80,7 @@ public class DriverSettingsFragment extends Fragment {
         currentUser = ParseUser.getCurrentUser();
 
         Log.i(TAG, "calling hasActiveOrder()");
-        hasActiveOrder();
+        hasActiveOrder = currentUser.getBoolean(KEY_HAS_ORDER);
         Log.i(TAG, "done running hasActiveOrder()");
         Log.i(TAG, String.valueOf(hasActiveOrder));
 
@@ -112,33 +113,6 @@ public class DriverSettingsFragment extends Fragment {
                     .into(imageViewProfile);
         }
 
-    }
-
-    // checks if the driver has an active order to prevent them from switching accounts/logging off
-    private void hasActiveOrder() {
-        Log.i(TAG, "running hasActiveOrder()");
-
-        ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
-        query.include(Order.KEY_DRIVER);
-
-        query.whereEqualTo(Order.KEY_DRIVER, currentUser);
-
-        query.findInBackground(new FindCallback<Order>() {
-            @Override
-            public void done(List<Order> orders, ParseException e) {
-                if(e != null){
-                    Log.e(TAG, "Issue with getting orders", e);
-                    return;
-                }
-
-                Log.i(TAG, "Driver's orders: "+ orders);
-                Log.i(TAG, "Driver's orders: "+ !orders.isEmpty());
-
-                hasActiveOrder = !orders.isEmpty();
-
-                Log.i(TAG, "hasActiveOrder: " + hasActiveOrder);
-            }
-        });
     }
 
     // Go to user activity

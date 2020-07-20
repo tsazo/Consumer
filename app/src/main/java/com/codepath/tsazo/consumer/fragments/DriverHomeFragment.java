@@ -68,9 +68,10 @@ public class DriverHomeFragment extends Fragment {
     private ParseUser currentUser;
 ////    LocationManager locationManager;
     private DriverHomeFragment fragment;
-    private Location mCurrentLocation;
+    private static Location mCurrentLocation;
     //private Location location;
     private final static String KEY_LOCATION = "location";
+    private final static String KEY_HAS_ORDER = "hasOrder";
 
     public DriverHomeFragment() {
         // Required empty public constructor
@@ -115,6 +116,19 @@ public class DriverHomeFragment extends Fragment {
             }
         });
 
+
+        // TODO: Handle when driver has an active order already.
+        if(currentUser.getBoolean(KEY_HAS_ORDER)){
+            Toast.makeText(getContext(), "Go to active order", Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
+
+    // Reload available orders each time activity is loaded
+    @Override
+    public void onStart(){
+        super.onStart();
+
         queryOrders();
     }
 
@@ -129,32 +143,31 @@ public class DriverHomeFragment extends Fragment {
     // TODO: connect driver to geopoint/location
     protected void queryOrders() {
         Log.i(TAG, "Checking if location is null @query orders");
-        if (mCurrentLocation != null){
-            // Specify which class to query
-            ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
-            query.include(Order.KEY_USER);
-            query.include(Order.KEY_STORE);
-            query.include(Order.KEY_DRIVER);
 
-            query.whereEqualTo(Order.KEY_DRIVER, null);
+        // Specify which class to query
+        ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
+        query.include(Order.KEY_USER);
+        query.include(Order.KEY_STORE);
+        query.include(Order.KEY_DRIVER);
 
-            query.findInBackground(new FindCallback<Order>() {
-                @Override
-                public void done(List<Order> orders, ParseException e) {
-                    if(e != null){
-                        Log.e(TAG, "Issue with getting orders", e);
-                        return;
-                    }
+        query.whereEqualTo(Order.KEY_DRIVER, null);
 
-                    for(Order order: orders) {
-                        Log.i(TAG, "Order: " + order.getOrderNumber() + ", user: " + order.getUser().getUsername());
-                    }
-
-                    allOrders.addAll(orders);
-                    adapter.notifyDataSetChanged();
+        query.findInBackground(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> orders, ParseException e) {
+                if(e != null){
+                    Log.e(TAG, "Issue with getting orders", e);
+                    return;
                 }
-            });
-        }
+
+                for(Order order: orders) {
+                    Log.i(TAG, "Order: " + order.getOrderNumber() + ", user: " + order.getUser().getUsername());
+                }
+
+                allOrders.addAll(orders);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     // Google Maps, retrieve location

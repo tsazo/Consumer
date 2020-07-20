@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.activities.DriverOrderDetailsActivity;
 import com.codepath.tsazo.consumer.models.Order;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
@@ -25,7 +26,6 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<DriverOrdersAdapte
     private List<Order> orders;
     private String KEY_STORE_NAME = "storeName";
     private String KEY_STORE_ADDRESS = "address";
-    private String KEY_IS_DRIVER = "isDriver";
 
     public DriverOrdersAdapter(Context context, List<Order> orders) {
         this.context = context;
@@ -97,6 +97,7 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<DriverOrdersAdapte
         @Override
         public void onClick(View v) {
             Log.i(TAG, "Driver order clicked");
+
             // Gets item position
             int position = getAdapterPosition();
 
