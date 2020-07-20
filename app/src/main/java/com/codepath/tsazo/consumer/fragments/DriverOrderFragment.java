@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,16 @@ public class DriverOrderFragment extends Fragment {
     public static final String TAG = "DriverOrderFragment";
     private ParseUser currentUser;
     private TextView textViewOrderHeader;
+    private TextView textViewStoreName;
+    private TextView textViewStoreAddress;
+    private TextView textViewOrderNumber;
+    private Button buttonNavigateStore;
+    private TextView textViewUserName;
+    private TextView textViewUserAddress;
+    private Button buttonCallUser;
+    private Button buttonNavigateUser;
+    private Button buttonPicture;
+    private Button buttonCompleteOrder;
     private boolean hasActiveOrder;
 
     private final static String KEY_HAS_ORDER = "hasOrder";
@@ -58,7 +69,7 @@ public class DriverOrderFragment extends Fragment {
         hasActiveOrder = currentUser.getBoolean(KEY_HAS_ORDER);
 
         if(hasActiveOrder){
-            setValues();
+            setValues(view);
         } else {
             textViewOrderHeader.setText("No Current Order");
         }
@@ -66,8 +77,42 @@ public class DriverOrderFragment extends Fragment {
     }
 
     // Sets all the values for the current order if there is one.
-    private void setValues() {
+    private void setValues(View view) {
         textViewOrderHeader.setText("Current Order");
+        textViewStoreName = view.findViewById(R.id.textViewStoreName);
+        textViewStoreAddress = view.findViewById(R.id.textViewStoreAddress);
+        textViewOrderNumber = view.findViewById(R.id.textViewOrderNumber);
+        buttonNavigateStore = view.findViewById(R.id.buttonNavigateStore);
+        textViewUserName = view.findViewById(R.id.textViewUserName);
+        textViewUserAddress = view.findViewById(R.id.textViewUserAddress);
+        buttonCallUser = view.findViewById(R.id.buttonCallUser);
+        buttonNavigateUser = view.findViewById(R.id.buttonNavigateUser);
+        buttonPicture = view.findViewById(R.id.buttonPicture);
+        buttonCompleteOrder = view.findViewById(R.id.buttonCompleteOrder);
 
+        // Specify which class to query
+        final ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
+        query.include(Order.KEY_USER);
+        query.include(Order.KEY_STORE);
+        query.include(Order.KEY_DRIVER);
+
+        query.whereEqualTo(Order.KEY_DRIVER, currentUser);
+
+        query.findInBackground(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> orders, ParseException e) {
+                if(e != null){
+                    Log.e(TAG, "Issue with getting orders", e);
+                    return;
+                }
+                Order order = orders.get(0);
+
+                textViewStoreName.setText(order.getStore().getName());
+                textViewStoreAddress.setText(order.getStore().getAddress());
+                textViewOrderNumber.setText(order.getOrderNumber());
+                textViewUserName.setText(order.getUser().getString("name"));
+                textViewUserAddress.setText(order.getUser().getString("address"));
+            }
+        });
     }
 }
