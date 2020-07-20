@@ -16,7 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.activities.MainActivity;
 import com.codepath.tsazo.consumer.activities.StoreActivity;
+import com.codepath.tsazo.consumer.adapters.StoresAdapter;
 import com.codepath.tsazo.consumer.models.Order;
 import com.codepath.tsazo.consumer.models.Store;
 import com.parse.ParseException;
@@ -35,8 +37,8 @@ public class UserComposeFragment extends Fragment {
     public static final String TAG = "UserComposeFragment";
     private Button buttonChoose;
     private EditText editTextOrder;
-    private TextView textViewStoreName;
-    private TextView textViewStoreAddress;
+    public TextView textViewStoreName;
+    public TextView textViewStoreAddress;
     private TextView textViewPrice;
     private Button buttonPlaceOrder;
     private float price;
@@ -67,6 +69,7 @@ public class UserComposeFragment extends Fragment {
         textViewStoreAddress = view.findViewById(R.id.textViewStoreAddress);
         textViewPrice = view.findViewById(R.id.textViewPrice);
         buttonPlaceOrder = view.findViewById(R.id.buttonPlaceOrder);
+
 
         // TODO: FIX DEFAULT PRICE TO BE DEPENDENT ON HOW FAR THE STORE IS TO THE USER
         price = 3;
@@ -138,17 +141,53 @@ public class UserComposeFragment extends Fragment {
     }
 
     // Handle the result of the sub-activity
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.i(TAG, "Returned to userComposeFragment from Store details view");
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-            Store store = Parcels.unwrap(data.getParcelableExtra(Store.class.getSimpleName()));
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG, "onstart!!!!!!");
+
+        // implement the interface before you create the adapter. and pass it in the adapters constructor
+        // getActivity().getIntent().getExtras()
+        if (getArguments() != null) {
+            Log.i(TAG, "getArguments...:" + getArguments().getParcelable("STORE_KEY_STRING"));
+            Store store = (Store) Parcels.unwrap(getActivity().getIntent().getExtras().getParcelable("STORE_KEY_STRING"));
             textViewStoreName.setText(store.name);
             textViewStoreAddress.setText(store.lat + ", " + store.lng);
         }
+
+//        if(getArguments() != null){
+//            Store store = (Store) Parcels.unwrap(getArguments().getParcelable("STORE_KEY_STRING"));
+//            Log.i(TAG, "store: " + store);
+//
+//            textViewStoreName.setText(store.name);
+//            textViewStoreAddress.setText(store.lat + ", " + store.lng);
+//        }
+//        Store store = (Store) Parcels.unwrap(getArguments().getParcelable("STORE_KEY_STRING"));
+//        Log.i(TAG, "store: " + store);
+//        if (store != null){
+//            textViewStoreName.setText(store.name);
+//            textViewStoreAddress.setText(store.lat + ", " + store.lng);
+//        }
+
     }
+
+    public void setStore(String name, String lat, String lng){
+        textViewStoreName.setText(name);
+        textViewStoreAddress.setText(lat + ", " + lng);
+    }
+
+//    @Override
+//    public void onResume(int requestCode, int resultCode, @Nullable Intent data) {
+//        Log.i(TAG, "Returned to userComposeFragment from Store details view");
+//        super.onResume(requestCode, resultCode, data);
+//
+//        if (resultCode == RESULT_OK) {
+//            Store store = Parcels.unwrap(data.getParcelableExtra(Store.class.getSimpleName()));
+//            textViewStoreName.setText(store.name);
+//            textViewStoreAddress.setText(store.lat + ", " + store.lng);
+//        }
+//    }
 
     // Save the order request to Parse
     private void savePost(String orderNumber, ParseUser currentUser, float price) {

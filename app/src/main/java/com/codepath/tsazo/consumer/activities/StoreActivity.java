@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -15,7 +16,9 @@ import android.widget.Toast;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.adapters.OnStoreSelectedListener;
 import com.codepath.tsazo.consumer.adapters.StoresAdapter;
+import com.codepath.tsazo.consumer.fragments.UserComposeFragment;
 import com.codepath.tsazo.consumer.models.Store;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
@@ -34,12 +37,14 @@ import permissions.dispatcher.NeedsPermission;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class StoreActivity extends AppCompatActivity {
+
     public static final String TAG = "StoreActivity";
 
-    AsyncHttpClient client;
-    RecyclerView recyclerViewStores;
-    List<Store> stores;
-    StoresAdapter adapter;
+    private AsyncHttpClient client;
+    private RecyclerView recyclerViewStores;
+    private List<Store> stores;
+    private StoresAdapter adapter;
+    private StoresAdapter.OnStoreSelectedListener listener;
 
     //Google Maps fields
     private ParseUser currentUser;
@@ -62,7 +67,23 @@ public class StoreActivity extends AppCompatActivity {
 
         // Initialize the list of stores and adapter
         stores = new ArrayList<>();
-        adapter = new StoresAdapter(this, stores);
+
+        // implement the interface before you create the adapter. and pass it in the adapters constructor
+        listener = new StoresAdapter.OnStoreSelectedListener() {
+            @Override
+            public void onStoreSelected(Store selectedStore) {
+                // this is the code that will be executed once user selects the store
+                Log.i(TAG, "Store: "+ selectedStore);
+
+                try {
+                    ((UserComposeFragment)(UserMainActivity.fragment)).setStore(selectedStore.name, selectedStore.lat, selectedStore.lng);
+                } catch (Exception e){
+                    Log.e(TAG, "Error... ", e);
+                }
+                finish();
+            }
+        };
+        adapter = new StoresAdapter(this, stores, listener);
 
         // RecyclerView setup: layout manager and the adapter
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -99,19 +120,5 @@ public class StoreActivity extends AppCompatActivity {
                 Log.i(TAG, "onFailure! " + response, throwable);
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Necessary for "saving" like information when people go back to posts screen
-        Log.i(TAG, "Onbackpressed and getIntent(): " + getIntent());
-
-        if(getIntent() != null){
-            setResult(RESULT_OK, getIntent());
-            finish();
-            return;
-        }
-
-        Toast.makeText(this, "Please choose a store.", Toast.LENGTH_SHORT).show();
     }
 }

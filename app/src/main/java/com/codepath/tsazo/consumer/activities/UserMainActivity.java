@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.MenuItem;
 
 import com.codepath.tsazo.consumer.R;
@@ -19,11 +21,14 @@ public class UserMainActivity extends AppCompatActivity {
     public static final String TAG = "UserMainActivity";
     private BottomNavigationView bottomNavigationViewUser;
     private final FragmentManager fragmentManager = getSupportFragmentManager();
+    public static Fragment fragment;
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_main);
+        activity = this;
 
         bottomNavigationViewUser = findViewById(R.id.bottom_navigation_user);
 
@@ -41,7 +46,7 @@ public class UserMainActivity extends AppCompatActivity {
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Fragment fragment;
+                        //Fragment fragment;
                         switch (item.getItemId()) {
                             case R.id.action_home:
                                 fragment = new UserHomeFragment();
@@ -61,4 +66,13 @@ public class UserMainActivity extends AppCompatActivity {
                 });
 
     }
+
+    public Fragment getFragment(){
+        return fragment;
+    }
+
+//    @Override
+//    public void onActivityResult(){
+//
+//    }
 }

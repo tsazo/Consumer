@@ -1,9 +1,6 @@
 package com.codepath.tsazo.consumer.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,27 +8,30 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.fragments.UserComposeFragment;
+import com.codepath.tsazo.consumer.activities.StoreActivity;
 import com.codepath.tsazo.consumer.models.Store;
-
-import org.parceler.Parcels;
 
 import java.util.List;
 
 public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder> {
 
+    public interface OnStoreSelectedListener {
+        void onStoreSelected(Store selectedStore);
+    }
+
     public static final String TAG = "StoresAdapter";
 
     private Context context;
     private List<Store> stores;
+    private OnStoreSelectedListener storeListener;
 
-    public StoresAdapter(Context context, List<Store> stores) {
+    public StoresAdapter(Context context, List<Store> stores, OnStoreSelectedListener onStoreSelectedListener) {
         this.context = context;
         this.stores = stores;
+        storeListener = onStoreSelectedListener ;// define a private member variable that is assigned in the constructor (can also use a setter to do this)
     }
 
     // For each row, inflate the layout
@@ -56,10 +56,7 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.putExtra(Store.class.getSimpleName(), Parcels.wrap(store));
-//                setResult(RESULT_OK, intent);
-//                finish();
+                storeListener.onStoreSelected(store);
             }
         });
     }
@@ -85,7 +82,8 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
     }
 
     // Define a ViewHolder
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+//    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         //ImageView imageViewMedia;
         TextView textViewName;
@@ -99,25 +97,13 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
             textViewLocation = itemView.findViewById(R.id.textViewLocation);
             //imageViewMedia = itemView.findViewById(R.id.imageViewMedia);
 
-            itemView.setOnClickListener(this);
+            //itemView.setOnClickListener(this);
         }
 
         // Take each attribute of the tweet and use those values to bind them to the screen
         public void bind(Store store) {
             textViewName.setText(store.name);
             textViewLocation.setText(store.lat + "," + store.lng);
-
-//            if(store.media.size() > 0){
-//                imageViewMedia.setVisibility(View.VISIBLE);
-//                String embeddedImageURL = tweet.media.get(0).baseURL;
-//                Log.i("TweetsAdapter", "baseURl: " + embeddedImageURL);
-//                Glide.with(context).load(embeddedImageURL)
-//                        .fitCenter()
-//                        .transform(new RoundedCornersTransformation(10, 10))
-//                        .into(imageViewMedia);
-//            } else {
-//                imageViewMedia.setVisibility(View.GONE);
-//            }
         }
 
         // when user clicks on a row, send the store information to the UserComposeFragment
@@ -135,15 +121,6 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
 //                Store store = stores.get(position);
 //
 //                Log.i(TAG, "Store: "+ store);
-//
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelable("store", (Parcelable) store);
-//
-//
-//                // create intent for the new activity
-////                intent = new Intent();
-////                intent.putExtra(Store.class.getSimpleName(), Parcels.wrap(store));
-////                Log.i(TAG, "intent: " + intent);
 //
 //            }
 //        }
