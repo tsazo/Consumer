@@ -16,18 +16,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.activities.MainActivity;
 import com.codepath.tsazo.consumer.activities.StoreActivity;
-import com.codepath.tsazo.consumer.adapters.StoresAdapter;
 import com.codepath.tsazo.consumer.models.Order;
-import com.codepath.tsazo.consumer.models.Store;
+import com.codepath.tsazo.consumer.models.ParseStore;
+
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.boltsinternal.Task;
 
-import org.parceler.Parcels;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -108,17 +107,15 @@ public class UserComposeFragment extends Fragment {
                     return;
                 }
 
-//                Store store = new Store();
-//                store.setName("PLACEHOLDER NAME");
-//                store.setAddress("PLACEHOLDER ADDRESS");
-
                 String storeName = textViewStoreName.getText().toString();
                 String storeAddress = textViewStoreAddress.getText().toString();
 
-                if(storeName == null || storeAddress == null){
+                if(storeName.isEmpty() || storeAddress.isEmpty()){
                     Toast.makeText(getContext(), "You must choose your store", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                ParseStore store = createStore(storeName, storeAddress);
 
                 ParseUser currentUser = ParseUser.getCurrentUser();
 
@@ -129,26 +126,53 @@ public class UserComposeFragment extends Fragment {
 
 
                 // TODO: Add store chooser to completely finish a proper order request
-                //savePost(orderNumber, currentUser, store, price);
-                savePost(orderNumber, currentUser, price);
+                saveOrder(orderNumber, currentUser, store, price);
+                //saveOrder(orderNumber, currentUser, price);
             }
 
         });
     }
 
+    // Create ParseStore on save
+    private ParseStore createStore(String storeName, String storeAddress) {
+        ParseStore store = new ParseStore();
+
+        //TODO: Change when I implement geopoint? (a.k.a. converting from coordinates to String addresses)
+        ParseGeoPoint parseGeoPoint = new ParseGeoPoint(0,0);
+
+        store.setName(storeName);
+        store.setAddress(storeAddress);
+        store.setLocation(parseGeoPoint);
+
+        store.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null){
+                    Log.e(TAG, "Error while saving", e);
+                    Toast.makeText(getContext(), "Error while saving store", Toast.LENGTH_SHORT).show();
+                }
+
+                Log.i(TAG, "Saving store was successful");
+            }
+        });
+
+        return store;
+    }
+
     // Sets the values of the stores once user selects a store in StoreActivity
     public void setStore(String name, String lat, String lng){
         textViewStoreName.setText(name);
-        textViewStoreAddress.setText(lat + ", " + lng);
+        textViewStoreAddress.setText(lat + "," + lng);
     }
 
     // Save the order request to Parse
-    private void savePost(String orderNumber, ParseUser currentUser, float price) {
+    private void saveOrder(String orderNumber, ParseUser currentUser, ParseStore store, float price) {
         Order order = new Order();
 
         order.setOrderNumber(orderNumber);
         order.setPrice(price);
         order.setUser(currentUser);
+        order.setStore(store);
 
         order.saveInBackground(new SaveCallback() {
             @Override
@@ -162,7 +186,7 @@ public class UserComposeFragment extends Fragment {
                 editTextOrder.setText("");
                 textViewStoreName.setText("");
                 textViewStoreAddress.setText("");
-                textViewPrice.setText("");
+                //textViewPrice.setText("");
             }
         });
     }

@@ -12,38 +12,14 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: See if code actually needs this STORE class
-
-//@ParseClassName("Store")
 @Parcel(analyze={Store.class})
-//public class Store extends ParseObject {
 public class Store {
     public String name;
     public String lat;
     public String lng;
 
-    public static final String KEY_NAME = "storeName";
-    public static final String KEY_ADDRESS = "address";
-    //public static final String KEY_CREATED_AT = "createdAt";
-
     // empty constructor needed by the Parceler library
     public Store() {}
-
-//    public String getName() {
-//        return getString(KEY_NAME);
-//    }
-//
-//    public void setName(String name) {
-//        put(KEY_NAME, name);
-//    }
-//
-//    public String getAddress() {
-//        return getString(KEY_ADDRESS);
-//    }
-//
-//    public void setAddress(ParseGeoPoint address) {
-//        put(KEY_ADDRESS, address);
-//    }
 
     // Create Store model from JSONObject parameter
     public static Store fromJson(JSONObject jsonObject) throws JSONException {
@@ -70,12 +46,4 @@ public class Store {
 
         return stores;
     }
-
-//    public ParseFile getImage(){
-//        return getParseFile(KEY_IMAGE);
-//    }
-
-//    public void setImage(ParseFile parseFile){
-//        put(KEY_IMAGE, parseFile);
-//    }
 }

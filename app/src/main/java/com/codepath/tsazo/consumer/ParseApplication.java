@@ -3,6 +3,8 @@ package com.codepath.tsazo.consumer;
 import android.app.Application;
 
 import com.codepath.tsazo.consumer.models.Order;
+import com.codepath.tsazo.consumer.models.ParseStore;
+import com.codepath.tsazo.consumer.models.Store;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -27,6 +29,7 @@ public class ParseApplication extends Application {
 
         // Register parse models
         ParseObject.registerSubclass(Order.class);
+        ParseObject.registerSubclass(ParseStore.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured
