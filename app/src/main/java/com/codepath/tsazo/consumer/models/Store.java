@@ -49,7 +49,7 @@ public class Store {
         store.placeId = jsonObject.getString("place_id");
 
 
-        //store.getAddress();
+        store.getAddress();
 
         //Log.i(TAG, "Address: " + store.address);
 

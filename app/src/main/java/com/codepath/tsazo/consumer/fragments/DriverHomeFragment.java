@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +58,7 @@ public class DriverHomeFragment extends Fragment {
 
     public static final String TAG = "DriverHomeFragment";
     private RecyclerView recyclerViewDriverOrders;
+    private ProgressBar progressBar;
     private TextView textViewOrdersHeader;
     private Button buttonOrder;
     public static DriverOrdersAdapter adapter;
@@ -93,6 +95,10 @@ public class DriverHomeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Setup any handles to view objects here
+        // on some click or some loading we need to wait for...
+        progressBar= view.findViewById(R.id.pbLoading);
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
         fragmentManager = getActivity().getSupportFragmentManager();
         bottomNavigationViewDriver = getActivity().findViewById(R.id.bottom_navigation_driver);
@@ -175,6 +181,8 @@ public class DriverHomeFragment extends Fragment {
 
                 allOrders.addAll(orders);
                 adapter.notifyDataSetChanged();
+                // run a background job and once complete
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }

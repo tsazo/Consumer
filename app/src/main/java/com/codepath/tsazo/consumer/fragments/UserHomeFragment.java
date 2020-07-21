@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.codepath.tsazo.consumer.adapters.OrdersAdapter;
@@ -42,6 +43,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 public class UserHomeFragment extends Fragment {
 
     public static final String TAG = "UserHomeFragment";
+    private ProgressBar progressBar;
     private RecyclerView recyclerViewOrders;
     private TextView textViewUserAddress;
     protected OrdersAdapter adapter;
@@ -68,6 +70,10 @@ public class UserHomeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Setup any handles to view objects here
+        // on some click or some loading we need to wait for...
+        progressBar= view.findViewById(R.id.pbLoading);
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
         recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
         textViewUserAddress = view.findViewById(R.id.textViewUserAddress);
@@ -112,6 +118,7 @@ public class UserHomeFragment extends Fragment {
 
                 allOrders.addAll(orders);
                 adapter.notifyDataSetChanged();
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }
