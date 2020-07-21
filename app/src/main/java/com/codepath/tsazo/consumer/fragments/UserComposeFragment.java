@@ -41,6 +41,9 @@ public class UserComposeFragment extends Fragment {
     private TextView textViewPrice;
     private Button buttonPlaceOrder;
     private float price;
+    private String storePlaceId;
+    private Double storeLat;
+    private Double storeLng;
 
     private final String KEY_ADDRESS = "address";
 
@@ -137,11 +140,12 @@ public class UserComposeFragment extends Fragment {
     private ParseStore createStore(String storeName, String storeAddress) {
         ParseStore store = new ParseStore();
 
-        //TODO: Change when I implement geopoint? (a.k.a. converting from coordinates to String addresses)
+        //TODO: Change when I implement geocoding? (a.k.a. converting from coordinates to String addresses)
         ParseGeoPoint parseGeoPoint = new ParseGeoPoint(0,0);
 
         store.setName(storeName);
-        store.setAddress(storeAddress);
+        store.setAddress(storePlaceId);
+        //store.setAddress(storeAddress);
         store.setLocation(parseGeoPoint);
 
         store.saveInBackground(new SaveCallback() {
@@ -160,9 +164,12 @@ public class UserComposeFragment extends Fragment {
     }
 
     // Sets the values of the stores once user selects a store in StoreActivity
-    public void setStore(String name, String lat, String lng){
+    public void setStore(String name, String lat, String lng, String placeId){
         textViewStoreName.setText(name);
         textViewStoreAddress.setText(lat + "," + lng);
+        storeLat = Double.valueOf(lat);
+        storeLng = Double.valueOf(lng);
+        storePlaceId = placeId;
     }
 
     // Save the order request to Parse
@@ -173,6 +180,7 @@ public class UserComposeFragment extends Fragment {
         order.setPrice(price);
         order.setUser(currentUser);
         order.setStore(store);
+        order.setDeliveryAddress(currentUser.getString(KEY_ADDRESS));
 
         order.saveInBackground(new SaveCallback() {
             @Override

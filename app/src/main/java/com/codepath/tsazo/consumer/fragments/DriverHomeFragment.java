@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
@@ -56,10 +57,12 @@ public class DriverHomeFragment extends Fragment {
 
     public static final String TAG = "DriverHomeFragment";
     private RecyclerView recyclerViewDriverOrders;
+    private TextView textViewOrdersHeader;
     private Button buttonOrder;
-    protected DriverOrdersAdapter adapter;
+    public static DriverOrdersAdapter adapter;
     protected List<Order> allOrders;
 
+    // Bottom Navigation fields
     private FragmentManager fragmentManager;
     private BottomNavigationView bottomNavigationViewDriver;
 
@@ -69,7 +72,7 @@ public class DriverHomeFragment extends Fragment {
 ////    LocationManager locationManager;
     private DriverHomeFragment fragment;
     private static Location mCurrentLocation;
-    //private Location location;
+
     private final static String KEY_LOCATION = "location";
     private final static String KEY_HAS_ORDER = "hasOrder";
 
@@ -95,6 +98,7 @@ public class DriverHomeFragment extends Fragment {
         bottomNavigationViewDriver = getActivity().findViewById(R.id.bottom_navigation_driver);
 
         recyclerViewDriverOrders = view.findViewById(R.id.recyclerViewDriverOrders);
+        textViewOrdersHeader = view.findViewById(R.id.textViewOrdersHeader);
         buttonOrder = view.findViewById(R.id.buttonOrder);
         currentUser = ParseUser.getCurrentUser();
         fragment = this;
@@ -117,7 +121,6 @@ public class DriverHomeFragment extends Fragment {
         });
 
 
-        // TODO: Handle when driver has an active order already.
         if(currentUser.getBoolean(KEY_HAS_ORDER)){
             Toast.makeText(getContext(), "Go to active order", Toast.LENGTH_SHORT).show();
             return;
@@ -129,14 +132,18 @@ public class DriverHomeFragment extends Fragment {
     public void onStart(){
         super.onStart();
 
-        queryOrders();
+        if(!currentUser.getBoolean(KEY_HAS_ORDER))
+            queryOrders();
+        else {
+            textViewOrdersHeader.setText("You Have an Active Order");
+        }
     }
 
     // Goes to order fragment
     private void goOrderFragment() {
-        Fragment fragment = new DriverOrderFragment();
+        DriverMainActivity.fragment = new DriverOrderFragment();
         bottomNavigationViewDriver.setSelectedItemId(R.id.action_order);
-        fragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, DriverMainActivity.fragment).commit();
     }
 
     // Get all orders within 10 miles of driver
@@ -149,8 +156,10 @@ public class DriverHomeFragment extends Fragment {
         query.include(Order.KEY_USER);
         query.include(Order.KEY_STORE);
         query.include(Order.KEY_DRIVER);
+        query.include(Order.KEY_DONE);
 
         query.whereEqualTo(Order.KEY_DRIVER, null);
+        query.whereEqualTo(Order.KEY_DONE, false);
 
         query.findInBackground(new FindCallback<Order>() {
             @Override

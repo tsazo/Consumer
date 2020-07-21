@@ -1,8 +1,11 @@
 package com.codepath.tsazo.consumer.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.activities.DriverMainActivity;
+import com.codepath.tsazo.consumer.activities.UserMainActivity;
 import com.codepath.tsazo.consumer.models.Order;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -42,7 +48,14 @@ public class DriverOrderFragment extends Fragment {
     private Button buttonCompleteOrder;
     private boolean hasActiveOrder;
 
+    private Order order;
+
+    // Bottom Navigation fields
+    private FragmentManager fragmentManager;
+    private BottomNavigationView bottomNavigationViewDriver;
+
     private final static String KEY_HAS_ORDER = "hasOrder";
+    private final static String KEY_IS_DONE = "isDone";
 
     public DriverOrderFragment() {
         // Required empty public constructor
@@ -61,24 +74,10 @@ public class DriverOrderFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Setup any handles to view objects here
+        fragmentManager = getActivity().getSupportFragmentManager();
+        bottomNavigationViewDriver = getActivity().findViewById(R.id.bottom_navigation_driver);
+
         textViewOrderHeader = view.findViewById(R.id.textViewOrderHeader);
-
-        // Gets the person who's logged in
-        currentUser = ParseUser.getCurrentUser();
-
-        hasActiveOrder = currentUser.getBoolean(KEY_HAS_ORDER);
-
-        if(hasActiveOrder){
-            setValues(view);
-        } else {
-            textViewOrderHeader.setText("No Current Order");
-        }
-
-    }
-
-    // Sets all the values for the current order if there is one.
-    private void setValues(View view) {
-        textViewOrderHeader.setText("Current Order");
         textViewStoreName = view.findViewById(R.id.textViewStoreName);
         textViewStoreAddress = view.findViewById(R.id.textViewStoreAddress);
         textViewOrderNumber = view.findViewById(R.id.textViewOrderNumber);
@@ -89,6 +88,55 @@ public class DriverOrderFragment extends Fragment {
         buttonNavigateUser = view.findViewById(R.id.buttonNavigateUser);
         buttonPicture = view.findViewById(R.id.buttonPicture);
         buttonCompleteOrder = view.findViewById(R.id.buttonCompleteOrder);
+
+        // Gets the person who's logged in
+        currentUser = ParseUser.getCurrentUser();
+
+        hasActiveOrder = currentUser.getBoolean(KEY_HAS_ORDER);
+
+        if(hasActiveOrder){
+            setValues(view);
+
+            // Navigate to store
+            navigateStore();
+
+            // Navigate to user
+            navigateUser();
+
+            // On complete-order button press
+            completeOrder();
+        } else {
+            noOrderValues();
+        }
+    }
+
+    private void noOrderValues() {
+        textViewOrderHeader.setText("No Current Order");
+        textViewStoreName.setVisibility(View.GONE);
+        textViewStoreAddress.setVisibility(View.GONE);
+        textViewOrderNumber.setVisibility(View.GONE);
+        buttonNavigateStore.setVisibility(View.GONE);
+        textViewUserName.setVisibility(View.GONE);
+        textViewUserAddress.setVisibility(View.GONE);
+        buttonCallUser.setVisibility(View.GONE);
+        buttonNavigateUser.setVisibility(View.GONE);
+        buttonPicture.setVisibility(View.GONE);
+        buttonCompleteOrder.setVisibility(View.GONE);
+    }
+
+    // Sets all the values for the current order if there is one.
+    private void setValues(View view) {
+        textViewOrderHeader.setText("Current Order");
+        textViewStoreName.setVisibility(View.VISIBLE);
+        textViewStoreAddress.setVisibility(View.VISIBLE);
+        textViewOrderNumber.setVisibility(View.VISIBLE);
+        buttonNavigateStore.setVisibility(View.VISIBLE);
+        textViewUserName.setVisibility(View.VISIBLE);
+        textViewUserAddress.setVisibility(View.VISIBLE);
+        buttonCallUser.setVisibility(View.VISIBLE);
+        buttonNavigateUser.setVisibility(View.VISIBLE);
+        buttonPicture.setVisibility(View.VISIBLE);
+        buttonCompleteOrder.setVisibility(View.VISIBLE);
 
         // Specify which class to query
         final ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
@@ -105,7 +153,7 @@ public class DriverOrderFragment extends Fragment {
                     Log.e(TAG, "Issue with getting orders", e);
                     return;
                 }
-                Order order = orders.get(0);
+                order = orders.get(0);
 
                 textViewStoreName.setText(order.getStore().getName());
                 textViewStoreAddress.setText(order.getStore().getAddress());
@@ -115,4 +163,71 @@ public class DriverOrderFragment extends Fragment {
             }
         });
     }
+
+    //
+    private void navigateStore() {
+        buttonNavigateStore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create a Uri from an intent string. Use the result to create an Intent.
+                Uri gmmIntentUri = Uri.parse("google.navigation:q="+textViewStoreAddress.getText()+"&mode=d");
+                Log.i(TAG, ""+ gmmIntentUri);
+
+                // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                // Make the Intent explicit by setting the Google Maps package
+                mapIntent.setPackage("com.google.android.apps.maps");
+
+                // Attempt to start an activity that can handle the Intent
+                if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
+            }
+        });
+    }
+
+    private void navigateUser() {
+        buttonNavigateUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Create a Uri from an intent string. Use the result to create an Intent.
+                Uri gmmIntentUri = Uri.parse("google.navigation:q="+textViewUserAddress.getText()+"&mode=d");
+                Log.i(TAG, ""+ gmmIntentUri);
+
+                // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                // Make the Intent explicit by setting the Google Maps package
+                mapIntent.setPackage("com.google.android.apps.maps");
+
+                // Attempt to start an activity that can handle the Intent
+                if (mapIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
+            }
+        });
+    }
+
+    // Updates the driver's boolean hasOrder as well as updates order boolean value isDone
+    // TODO: Add earnings value for driver
+    private void completeOrder() {
+        buttonCompleteOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: DO a check to see if Driver is at/near delivery address before completing order
+                currentUser.put(KEY_HAS_ORDER, false);
+                order.setIsDone(true);
+
+                currentUser.saveInBackground();
+                order.saveInBackground();
+
+                Toast.makeText(getContext(), "Completed order! Thank you.", Toast.LENGTH_SHORT).show();
+
+                // Goes to home fragment
+                DriverMainActivity.fragment = DriverMainActivity.driverHomeFragment;
+                bottomNavigationViewDriver.setSelectedItemId(R.id.action_home);
+                fragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, DriverMainActivity.fragment).commit();
+            }
+        });
+    }
+
 }

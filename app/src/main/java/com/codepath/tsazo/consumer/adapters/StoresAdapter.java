@@ -97,6 +97,7 @@ public class StoresAdapter extends RecyclerView.Adapter<StoresAdapter.ViewHolder
         // Take each attribute of the tweet and use those values to bind them to the screen
         public void bind(Store store) {
             textViewName.setText(store.name);
+            //textViewLocation.setText(store.address);
             textViewLocation.setText(store.lat + "," + store.lng);
         }
     }

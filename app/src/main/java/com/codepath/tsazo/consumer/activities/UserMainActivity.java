@@ -21,10 +21,10 @@ public class UserMainActivity extends AppCompatActivity {
 
     public static final String TAG = "UserMainActivity";
     private BottomNavigationView bottomNavigationViewUser;
-    private final FragmentManager fragmentManager = getSupportFragmentManager();
+    public final FragmentManager fragmentManager = getSupportFragmentManager();
     public static Fragment fragment;
     public static Activity activity;
-    private static UserHomeFragment userHomeFragment;
+    public static UserHomeFragment userHomeFragment;
     private static UserComposeFragment userComposeFragment;
     private static UserSettingsFragment userSettingsFragment;
 

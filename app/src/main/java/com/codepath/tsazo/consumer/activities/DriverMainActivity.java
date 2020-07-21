@@ -47,8 +47,8 @@ public class DriverMainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationViewDriver;
     private final FragmentManager fragmentManager = getSupportFragmentManager();
     public static Fragment fragment;
-    private static DriverHomeFragment driverHomeFragment;
-    private static DriverOrderFragment driverOrderFragment;
+    public static DriverHomeFragment driverHomeFragment;
+    public static DriverOrderFragment driverOrderFragment;
     private static DriverSettingsFragment driverSettingsFragment;
 
     @Override

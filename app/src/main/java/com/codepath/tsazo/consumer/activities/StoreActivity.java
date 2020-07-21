@@ -1,6 +1,8 @@
 package com.codepath.tsazo.consumer.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,7 +68,7 @@ public class StoreActivity extends AppCompatActivity {
                 Log.i(TAG, "Store: "+ selectedStore);
 
                 try {
-                    ((UserComposeFragment)(UserMainActivity.fragment)).setStore(selectedStore.name, selectedStore.lat, selectedStore.lng);
+                    ((UserComposeFragment)(UserMainActivity.fragment)).setStore(selectedStore.name, selectedStore.lat, selectedStore.lng, selectedStore.placeId);
                 } catch (Exception e){
                     Log.e(TAG, "Error... ", e);
                 }
@@ -111,4 +113,5 @@ public class StoreActivity extends AppCompatActivity {
             }
         });
     }
+
 }

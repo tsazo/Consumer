@@ -121,8 +121,11 @@ public class UserSettingsFragment extends Fragment {
                 currentUser.setUsername(editTextUserName.getText().toString());
                 currentUser.setEmail(editTextUserEmail.getText().toString());
 
-                if(editTextAddress.getText().toString() != null)
-                    currentUser.put(KEY_ADDRESS, editTextAddress.getText().toString());
+                String address = editTextAddress.getText().toString();
+
+                if(address != null){
+                    currentUser.put(KEY_ADDRESS, address);
+                }
 
 
                 currentUser.saveInBackground(new SaveCallback() {

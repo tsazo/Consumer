@@ -33,5 +33,6 @@ public class ParseStore extends ParseObject {
 
     public void setLocation(ParseGeoPoint parseGeoPoint) {
         put(KEY_LOCATION, parseGeoPoint);
+
     }
 }

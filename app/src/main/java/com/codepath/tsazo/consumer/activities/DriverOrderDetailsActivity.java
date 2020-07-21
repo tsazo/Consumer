@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.fragments.DriverHomeFragment;
 import com.codepath.tsazo.consumer.models.Order;
 import com.codepath.tsazo.consumer.models.ParseStore;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -98,7 +99,9 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
                 order.setDriver(ParseUser.getCurrentUser());
                 order.saveInBackground();
                 ParseUser.getCurrentUser().put(KEY_HAS_ORDER, true);
+                ParseUser.getCurrentUser().saveInBackground();
                 Toast.makeText(DriverOrderDetailsActivity.this, "Accepted Order!", Toast.LENGTH_SHORT).show();
+                DriverHomeFragment.adapter.notifyDataSetChanged();
                 finish();
             }
         });
@@ -111,7 +114,7 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
         textViewLocation = findViewById(R.id.textViewLocation);
         buttonAcceptOrder = findViewById(R.id.buttonAcceptOrder);
 
-        order = (Order) Parcels.unwrap(getIntent().getParcelableExtra(Order.class.getSimpleName()));
+        order = Parcels.unwrap(getIntent().getParcelableExtra(Order.class.getSimpleName()));
 
         textViewPrice.setText("$" + order.getPrice());
         textViewStoreName.setText(order.getStore().getName());
