@@ -46,6 +46,10 @@ public class DriverMainActivity extends AppCompatActivity {
     public static final String TAG = "DriverMainActivity";
     private BottomNavigationView bottomNavigationViewDriver;
     private final FragmentManager fragmentManager = getSupportFragmentManager();
+    public static Fragment fragment;
+    private static DriverHomeFragment driverHomeFragment;
+    private static DriverOrderFragment driverOrderFragment;
+    private static DriverSettingsFragment driverSettingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +73,25 @@ public class DriverMainActivity extends AppCompatActivity {
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Fragment fragment;
                         switch (item.getItemId()) {
                             case R.id.action_home:
-                                fragment = new DriverHomeFragment();
+                                if(driverHomeFragment == null)
+                                    driverHomeFragment = new DriverHomeFragment();
+
+                                fragment = driverHomeFragment;
                                 break;
                             case R.id.action_order:
-                                fragment = new DriverOrderFragment();
+                                if(driverOrderFragment == null)
+                                    driverOrderFragment = new DriverOrderFragment();
+
+                                fragment = driverOrderFragment;
                                 break;
                             case R.id.action_profile:
                             default:
-                                fragment = new DriverSettingsFragment();
+                                if(driverSettingsFragment == null)
+                                    driverSettingsFragment = new DriverSettingsFragment();
+
+                                fragment = driverSettingsFragment;
                                 break;
                         }
 

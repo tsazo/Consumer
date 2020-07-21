@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.codepath.tsazo.consumer.R;
@@ -23,6 +24,9 @@ public class UserMainActivity extends AppCompatActivity {
     private final FragmentManager fragmentManager = getSupportFragmentManager();
     public static Fragment fragment;
     public static Activity activity;
+    private static UserHomeFragment userHomeFragment;
+    private static UserComposeFragment userComposeFragment;
+    private static UserSettingsFragment userSettingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +50,25 @@ public class UserMainActivity extends AppCompatActivity {
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        //Fragment fragment;
                         switch (item.getItemId()) {
                             case R.id.action_home:
-                                fragment = new UserHomeFragment();
+                                if(userHomeFragment == null)
+                                    userHomeFragment = new UserHomeFragment();
+
+                                fragment = userHomeFragment;
                                 break;
                             case R.id.action_create:
-                                fragment = new UserComposeFragment();
+                                if(userComposeFragment == null)
+                                    userComposeFragment = new UserComposeFragment();
+
+                                fragment = userComposeFragment;
                                 break;
                             case R.id.action_profile:
                             default:
-                                fragment = new UserSettingsFragment();
+                                if(userSettingsFragment == null)
+                                    userSettingsFragment = new UserSettingsFragment();
+
+                                fragment = userSettingsFragment;
                                 break;
                         }
 
@@ -66,13 +78,4 @@ public class UserMainActivity extends AppCompatActivity {
                 });
 
     }
-
-    public Fragment getFragment(){
-        return fragment;
-    }
-
-//    @Override
-//    public void onActivityResult(){
-//
-//    }
 }
