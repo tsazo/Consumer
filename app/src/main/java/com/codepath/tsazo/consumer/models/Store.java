@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.activities.MainActivity;
+import com.codepath.tsazo.consumer.adapters.StoresAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +22,13 @@ import okhttp3.Headers;
 
 @Parcel(analyze={Store.class})
 public class Store {
+
+    public interface OnStoreAddressSetListener {
+        // These methods are the different events and
+        // need to pass relevant arguments related to the event triggered
+        void onAddressSet(String address);
+    }
+
     public static final String TAG = "Store";
 
     public String name;
@@ -35,8 +43,8 @@ public class Store {
     public Store() {}
 
     // Create Store model from JSONObject parameter
-    public static Store fromJson(JSONObject jsonObject) throws JSONException {
-        Store store = new Store();
+    public static Store fromJson(JSONObject jsonObject, OnStoreAddressSetListener listener) throws JSONException {
+        final Store store = new Store();
         store.name = jsonObject.getString("name");
 
         JSONObject locationCoordinates = jsonObject.getJSONObject("geometry").getJSONObject("location");
@@ -48,8 +56,7 @@ public class Store {
 
         store.placeId = jsonObject.getString("place_id");
 
-
-        store.getAddress();
+        store.getAddress(listener);
 
         //Log.i(TAG, "Address: " + store.address);
 
@@ -57,18 +64,23 @@ public class Store {
     }
 
     // Build the list of Stores that will appear in the StoresActivity
-    public static List<Store> fromJsonArray(JSONArray jsonArray) throws JSONException {
-        List<Store> stores = new ArrayList<>();
+    public static List<Store> fromJsonArray(final JSONArray jsonArray) throws JSONException {
+        final List<Store> stores = new ArrayList<>();
 
         for(int i = 0; i < jsonArray.length(); i++){
-            stores.add(fromJson(jsonArray.getJSONObject(i)));
+            stores.add(fromJson(jsonArray.getJSONObject(i), new OnStoreAddressSetListener() {
+                @Override
+                public void onAddressSet(String address) {
+                    Log.i(TAG, "onAddressSet: " + address);
+                }
+            }));
         }
 
         return stores;
     }
 
     // Access the Geocoding Api to convert coordinates to addresses
-    public void getAddress() {
+    public void getAddress(final OnStoreAddressSetListener listener) {
         AsyncHttpClient client = new AsyncHttpClient();
 
         String placesDetails = PLACES_DETAILS + placeId + "&key=AIzaSyB33o9qfsYo0BoA_oBOVAxN4XmQaamWIv4";
@@ -80,6 +92,7 @@ public class Store {
                 JSONObject jsonObject = json.jsonObject;
                 try {
                     address = jsonObject.getJSONObject("result").getString("formatted_address");
+                    listener.onAddressSet(address);
                     Log.i(TAG, address);
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
