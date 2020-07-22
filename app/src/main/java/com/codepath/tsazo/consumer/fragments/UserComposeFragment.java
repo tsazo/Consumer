@@ -20,6 +20,7 @@ import com.codepath.tsazo.consumer.activities.StoreActivity;
 import com.codepath.tsazo.consumer.models.Order;
 import com.codepath.tsazo.consumer.models.ParseStore;
 
+import com.codepath.tsazo.consumer.models.Store;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -42,6 +43,7 @@ public class UserComposeFragment extends Fragment {
     private Button buttonPlaceOrder;
     private float price;
     private String storePlaceId;
+    //private String storeAddress;
     private Double storeLat;
     private Double storeLng;
 
@@ -141,12 +143,13 @@ public class UserComposeFragment extends Fragment {
         ParseStore store = new ParseStore();
 
         //TODO: Change when I implement geocoding? (a.k.a. converting from coordinates to String addresses)
-        ParseGeoPoint parseGeoPoint = new ParseGeoPoint(0,0);
+        ParseGeoPoint parseGeoPoint = new ParseGeoPoint(storeLat,storeLng);
 
         store.setName(storeName);
-        store.setAddress(storePlaceId);
-        //store.setAddress(storeAddress);
+        //store.setAddress(storePlaceId);
+        store.setAddress(storeAddress);
         store.setLocation(parseGeoPoint);
+        store.setPlaceId(storePlaceId);
 
         store.saveInBackground(new SaveCallback() {
             @Override
@@ -164,12 +167,15 @@ public class UserComposeFragment extends Fragment {
     }
 
     // Sets the values of the stores once user selects a store in StoreActivity
-    public void setStore(String name, String lat, String lng, String placeId){
-        textViewStoreName.setText(name);
-        textViewStoreAddress.setText(lat + "," + lng);
-        storeLat = Double.valueOf(lat);
-        storeLng = Double.valueOf(lng);
-        storePlaceId = placeId;
+    public void setStore(Store store){
+        textViewStoreName.setText(store.name);
+        //textViewStoreAddress.setText(store.lat + "," + store.lng);
+        storeLat = Double.valueOf(store.lat);
+        storeLng = Double.valueOf(store.lng);
+        storePlaceId = store.placeId;
+        //storeAddress = store.address;
+
+        textViewStoreAddress.setText(store.address);
     }
 
     // Save the order request to Parse
@@ -190,6 +196,7 @@ public class UserComposeFragment extends Fragment {
                     Toast.makeText(getContext(), "Error while saving", Toast.LENGTH_SHORT).show();
                 }
 
+                Toast.makeText(getContext(), "Order created!" , Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "Saving order was successful");
                 editTextOrder.setText("");
                 textViewStoreName.setText("");

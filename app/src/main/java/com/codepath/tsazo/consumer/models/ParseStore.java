@@ -9,6 +9,7 @@ public class ParseStore extends ParseObject {
     public static final String KEY_NAME = "storeName";
     public static final String KEY_ADDRESS = "address";
     public static final String KEY_LOCATION = "location";
+    public static final String KEY_PLACE_ID = "placeId";
     //public static final String KEY_CREATED_AT = "createdAt";
 
     public String getName() {
@@ -25,6 +26,14 @@ public class ParseStore extends ParseObject {
 
     public void setAddress(String address) {
         put(KEY_ADDRESS, address);
+    }
+
+    public String getPlaceId() {
+        return getString(KEY_PLACE_ID);
+    }
+
+    public void setPlaceId(String placeId) {
+        put(KEY_PLACE_ID, placeId);
     }
 
     public ParseGeoPoint getLocation() {

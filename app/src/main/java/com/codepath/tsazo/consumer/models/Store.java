@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
+import org.parceler.ParcelPropertyConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,15 +66,40 @@ public class Store {
 
     // Build the list of Stores that will appear in the StoresActivity
     public static List<Store> fromJsonArray(final JSONArray jsonArray) throws JSONException {
+        List<Store> tempStores = new ArrayList<>();
         final List<Store> stores = new ArrayList<>();
+        final boolean[] isAddressSet = {false};
 
         for(int i = 0; i < jsonArray.length(); i++){
+
+            //stores.add(fromJson(jsonArray.getJSONObject(i), listener));
+
+//            Store store;
+//
+//            OnStoreAddressSetListener listener = new OnStoreAddressSetListener() {
+//                @Override
+//                public void onAddressSet(String address) {
+//                    stores.add(store);
+//                }
+//            };
+//
+//            store = fromJson(fromJson(jsonArray.getJSONObject(i), listener);
+
             stores.add(fromJson(jsonArray.getJSONObject(i), new OnStoreAddressSetListener() {
                 @Override
                 public void onAddressSet(String address) {
                     Log.i(TAG, "onAddressSet: " + address);
                 }
             }));
+
+//            final Store store = fromJson(jsonArray.getJSONObject(i), new OnStoreAddressSetListener() {
+//                @Override
+//                public void onAddressSet(String address) {
+//                    Log.i(TAG, "onAddressSet: " + address);
+//                    stores.add(store);
+//                }
+//            });
+
         }
 
         return stores;

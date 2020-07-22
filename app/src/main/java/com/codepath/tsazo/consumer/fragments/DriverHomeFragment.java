@@ -137,11 +137,13 @@ public class DriverHomeFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
+        adapter.clear();
 
         if(!currentUser.getBoolean(KEY_HAS_ORDER))
             queryOrders();
         else {
             textViewOrdersHeader.setText("You Have an Active Order");
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 

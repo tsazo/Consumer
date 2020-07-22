@@ -68,7 +68,7 @@ public class StoreActivity extends AppCompatActivity {
                 Log.i(TAG, "Store: "+ selectedStore);
 
                 try {
-                    ((UserComposeFragment)(UserMainActivity.fragment)).setStore(selectedStore.name, selectedStore.lat, selectedStore.lng, selectedStore.placeId);
+                    ((UserComposeFragment)(UserMainActivity.fragment)).setStore(selectedStore);
                 } catch (Exception e){
                     Log.e(TAG, "Error... ", e);
                 }

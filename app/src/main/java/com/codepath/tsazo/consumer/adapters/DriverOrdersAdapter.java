@@ -51,6 +51,12 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<DriverOrdersAdapte
         return orders.size();
     }
 
+    // Clean all elements of the recycler
+    public void clear() {
+        orders.clear();
+        notifyDataSetChanged();
+    }
+
     // Bind the item_post to the RecyclerView
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 

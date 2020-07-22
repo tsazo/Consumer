@@ -55,7 +55,7 @@ public class DriverOrderFragment extends Fragment {
     private BottomNavigationView bottomNavigationViewDriver;
 
     private final static String KEY_HAS_ORDER = "hasOrder";
-    private final static String KEY_IS_DONE = "isDone";
+    private final static String KEY_EARNINGS = "earnings";
 
     public DriverOrderFragment() {
         // Required empty public constructor
@@ -145,6 +145,7 @@ public class DriverOrderFragment extends Fragment {
         query.include(Order.KEY_DRIVER);
 
         query.whereEqualTo(Order.KEY_DRIVER, currentUser);
+        query.whereEqualTo(Order.KEY_DONE, false);
 
         query.findInBackground(new FindCallback<Order>() {
             @Override
@@ -215,6 +216,8 @@ public class DriverOrderFragment extends Fragment {
             public void onClick(View view) {
                 // TODO: DO a check to see if Driver is at/near delivery address before completing order
                 currentUser.put(KEY_HAS_ORDER, false);
+                Number totalEarnings = (float) currentUser.getNumber(KEY_EARNINGS) + (float) order.getPrice();
+                currentUser.put(KEY_EARNINGS, totalEarnings);
                 order.setIsDone(true);
 
                 currentUser.saveInBackground();

@@ -100,8 +100,8 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
                 order.saveInBackground();
                 ParseUser.getCurrentUser().put(KEY_HAS_ORDER, true);
                 ParseUser.getCurrentUser().saveInBackground();
+
                 Toast.makeText(DriverOrderDetailsActivity.this, "Accepted Order!", Toast.LENGTH_SHORT).show();
-                DriverHomeFragment.adapter.notifyDataSetChanged();
                 finish();
             }
         });

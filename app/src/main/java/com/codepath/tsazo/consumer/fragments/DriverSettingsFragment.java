@@ -36,6 +36,7 @@ import java.util.List;
  */
 public class DriverSettingsFragment extends Fragment {
 
+    // TODO: Add XML feeatures here!
     public static final String TAG = "DriverSettingsFragment";
     private EditText editTextName;
     private EditText editTextEmail;
