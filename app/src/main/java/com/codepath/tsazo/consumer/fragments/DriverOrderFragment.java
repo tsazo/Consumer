@@ -160,12 +160,12 @@ public class DriverOrderFragment extends Fragment {
                 textViewStoreAddress.setText(order.getStore().getAddress());
                 textViewOrderNumber.setText(order.getOrderNumber());
                 textViewUserName.setText(order.getUser().getString("name"));
-                textViewUserAddress.setText(order.getUser().getString("address"));
+                textViewUserAddress.setText(order.getDeliveryAddress());
             }
         });
     }
 
-    //
+    // Button to start intent for Google Maps to navigate to the store
     private void navigateStore() {
         buttonNavigateStore.setOnClickListener(new View.OnClickListener() {
             @Override
