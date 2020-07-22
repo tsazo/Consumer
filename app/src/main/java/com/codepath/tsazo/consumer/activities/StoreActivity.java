@@ -1,11 +1,14 @@
 package com.codepath.tsazo.consumer.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -15,6 +18,7 @@ import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.adapters.StoresAdapter;
 import com.codepath.tsazo.consumer.fragments.UserComposeFragment;
 import com.codepath.tsazo.consumer.models.Store;
+import com.parse.Parse;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
@@ -26,10 +30,7 @@ import java.util.List;
 
 import okhttp3.Headers;
 
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
-
 public class StoreActivity extends AppCompatActivity {
-
     public static final String TAG = "StoreActivity";
 
     private AsyncHttpClient client;
@@ -40,8 +41,11 @@ public class StoreActivity extends AppCompatActivity {
 
     //Google Maps fields
     private ParseUser currentUser;
+    //private String userAddress;
     private ParseGeoPoint userLocation;
     private final static String KEY_LOCATION = "location";
+    private static Location mCurrentLocation;
+    //private final static String KEY_ADDRESS = "address";
     private String FIND_PLACE_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
     private String FIND_PLACE_URL_END = "&radius=16000&type=clothing_store&key="; // a little less than 10 miles radius and clothing store
 
@@ -49,9 +53,16 @@ public class StoreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
-        currentUser = ParseUser.getCurrentUser();
+
         client = new AsyncHttpClient();
-        userLocation = (ParseGeoPoint) currentUser.get(KEY_LOCATION);
+
+        currentUser = ParseUser.getCurrentUser();
+        userLocation = currentUser.getParseGeoPoint(KEY_LOCATION);
+
+        // TODO: Base find nearby search off of address by using Geocode to convert address to coordinates
+        // Possibly convert address to coordinates in user settings
+
+        //userAddress = currentUser.getString(KEY_ADDRESS);
         FIND_PLACE_URL_END += getString(R.string.google_maps_api_key);
 
         // Find the RecyclerView
@@ -83,13 +94,15 @@ public class StoreActivity extends AppCompatActivity {
         recyclerViewStores.setAdapter(adapter);
 
         getStores();
+
     }
 
     // Populate the stores recyclerView
     private void getStores() {
-//        String placesUrl = FIND_PLACE_URL + userLocation.getLatitude() + userLocation.getLongitude()
-////                + FIND_PLACE_URL_END;
-        String placesUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyB33o9qfsYo0BoA_oBOVAxN4XmQaamWIv4";
+        String placesUrl = FIND_PLACE_URL + userLocation.getLatitude() + "," + userLocation.getLongitude() + FIND_PLACE_URL_END;
+
+        Log.i(TAG, "placesURL: " + placesUrl);
+        //String placesUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyB33o9qfsYo0BoA_oBOVAxN4XmQaamWIv4";
 
         client.get(placesUrl, new JsonHttpResponseHandler(){
             @Override
@@ -113,5 +126,4 @@ public class StoreActivity extends AppCompatActivity {
             }
         });
     }
-
 }

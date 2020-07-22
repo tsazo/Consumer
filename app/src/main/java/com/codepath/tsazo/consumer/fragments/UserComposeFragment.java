@@ -1,8 +1,11 @@
 package com.codepath.tsazo.consumer.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -21,6 +24,9 @@ import com.codepath.tsazo.consumer.models.Order;
 import com.codepath.tsazo.consumer.models.ParseStore;
 
 import com.codepath.tsazo.consumer.models.Store;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -28,10 +34,16 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.boltsinternal.Task;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
+@RuntimePermissions
 public class UserComposeFragment extends Fragment {
 
     public static final String TAG = "UserComposeFragment";
@@ -41,6 +53,8 @@ public class UserComposeFragment extends Fragment {
     public TextView textViewStoreAddress;
     private TextView textViewPrice;
     private Button buttonPlaceOrder;
+
+    ParseUser currentUser;
     private float price;
     private String storePlaceId;
     //private String storeAddress;
@@ -48,6 +62,10 @@ public class UserComposeFragment extends Fragment {
     private Double storeLng;
 
     private final String KEY_ADDRESS = "address";
+
+    //Google Maps fields
+    private final static String KEY_LOCATION = "location";
+    private static Location mCurrentLocation;
 
     public UserComposeFragment() {
         // Required empty public constructor
@@ -74,6 +92,7 @@ public class UserComposeFragment extends Fragment {
         textViewPrice = view.findViewById(R.id.textViewPrice);
         buttonPlaceOrder = view.findViewById(R.id.buttonPlaceOrder);
 
+        currentUser = ParseUser.getCurrentUser();
 
         // TODO: FIX DEFAULT PRICE TO BE DEPENDENT ON HOW FAR THE STORE IS TO THE USER
         price = 3;
@@ -122,8 +141,6 @@ public class UserComposeFragment extends Fragment {
 
                 ParseStore store = createStore(storeName, storeAddress);
 
-                ParseUser currentUser = ParseUser.getCurrentUser();
-
                 if(currentUser.getString(KEY_ADDRESS) == null){
                     Toast.makeText(getContext(), "You don't have a delivery address!", Toast.LENGTH_SHORT).show();
                     return;
@@ -131,7 +148,8 @@ public class UserComposeFragment extends Fragment {
 
 
                 // TODO: Add store chooser to completely finish a proper order request
-                saveOrder(orderNumber, currentUser, store, price);
+                saveOrder(orderNumber, store);
+                //saveOrder(orderNumber, currentUser, store, price);
                 //saveOrder(orderNumber, currentUser, price);
             }
 
@@ -179,7 +197,8 @@ public class UserComposeFragment extends Fragment {
     }
 
     // Save the order request to Parse
-    private void saveOrder(String orderNumber, ParseUser currentUser, ParseStore store, float price) {
+    //private void saveOrder(String orderNumber, ParseUser currentUser, ParseStore store, float price) {
+    private void saveOrder(String orderNumber, ParseStore store) {
         Order order = new Order();
 
         order.setOrderNumber(orderNumber);
@@ -204,5 +223,45 @@ public class UserComposeFragment extends Fragment {
                 //textViewPrice.setText("");
             }
         });
+    }
+
+    // Google Maps, retrieve location
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        UserComposeFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    public void getMyLocation() {
+        // Access users current location
+        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
+        locationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            Log.i(TAG, "Location: " + location.toString());
+                            mCurrentLocation = location;
+                            ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+
+                            currentUser.put(KEY_LOCATION, geoPoint);
+                            currentUser.saveInBackground();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Error trying to get last GPS location");
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
+        super.onSaveInstanceState(savedInstanceState);
     }
 }

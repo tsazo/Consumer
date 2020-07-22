@@ -117,7 +117,7 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
 
         order = Parcels.unwrap(getIntent().getParcelableExtra(Order.class.getSimpleName()));
 
-        textViewPrice.setText("$" + order.getPrice());
+        textViewPrice.setText("$" + order.getPrice() + ".00");
         textViewStoreName.setText(order.getStore().getName());
         textViewLocation.setText(order.getStore().getAddress());
     }

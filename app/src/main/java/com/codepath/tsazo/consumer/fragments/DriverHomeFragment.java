@@ -71,7 +71,6 @@ public class DriverHomeFragment extends Fragment {
     //Google Maps fields
 //    private static final int REQUEST_LOCATION = 1;
     private ParseUser currentUser;
-////    LocationManager locationManager;
     private DriverHomeFragment fragment;
     private static Location mCurrentLocation;
 
