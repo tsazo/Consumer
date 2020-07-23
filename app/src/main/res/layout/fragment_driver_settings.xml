@@ -23,6 +23,14 @@
                 android:layout_marginTop="20dp"
                 tools:srcCompat="@tools:sample/avatars" />
 
+            <Button
+                android:id="@+id/buttonChangePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:text="Change Profile Picture" />
+
             <EditText
                 android:id="@+id/editTextName"
                 android:layout_width="match_parent"
@@ -33,6 +41,13 @@
                 android:ems="10"
                 android:hint="Name" />
 
+            <Button
+                android:id="@+id/buttonChangeName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Change Name" />
+
             <EditText
                 android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
@@ -40,18 +55,19 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
+                android:inputType="textEmailAddress"
                 android:ems="10"
                 android:hint="Email" />
 
             <Button
-                android:id="@+id/buttonChangeProfile"
+                android:id="@+id/buttonChangeEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="10dp"
-                android:text="CHANGE PROFILE" />
+                android:text="Change Email" />
 
             <TextView
                 android:id="@+id/textViewRatingHeader"

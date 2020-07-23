@@ -1,8 +1,6 @@
 package com.codepath.tsazo.consumer.fragments;
 
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -23,23 +20,13 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.activities.LoginActivity;
-import com.codepath.tsazo.consumer.activities.UserMainActivity;
-import com.codepath.tsazo.consumer.models.Order;
-import com.codepath.tsazo.consumer.models.Store;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseGeoPoint;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Headers;
 
@@ -54,14 +41,16 @@ public class UserSettingsFragment extends Fragment {
     private EditText editTextAddress;
     private ImageView imageViewProfile;
     private ParseUser currentUser;
-    private Button buttonChangeProfile;
+    private Button buttonChangePicture;
+    private Button buttonChangeName;
+    private Button buttonChangeEmail;
+    private Button buttonChangeAddress;
     private Button buttonDriver;
     private Button buttonLogout;
 
     public static final String GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 
     private static final String KEY_ADDRESS = "address";
-    private static final String KEY_LOCATION = "location";
     private static final String KEY_ADDRESS_COORDS = "addressCoords";
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
@@ -90,7 +79,10 @@ public class UserSettingsFragment extends Fragment {
         editTextUserEmail = view.findViewById(R.id.editTextUserEmail);
         editTextAddress = view.findViewById(R.id.editTextAddress);
         imageViewProfile = view.findViewById(R.id.imageViewProfile);
-        buttonChangeProfile = view.findViewById(R.id.buttonChangeProfile);
+        buttonChangePicture = view.findViewById(R.id.buttonChangePicture);
+        buttonChangeName = view.findViewById(R.id.buttonChangeName);
+        buttonChangeEmail = view.findViewById(R.id.buttonChangeEmail);
+        buttonChangeAddress = view.findViewById(R.id.buttonChangeAddress);
         buttonDriver = view.findViewById(R.id.buttonDriver);
 
         // Gets the person who's logged in
@@ -99,8 +91,20 @@ public class UserSettingsFragment extends Fragment {
         // Set values
         setValues();
 
+        // Update picture
+        updatePicture();
+
+        // Update name
+        updateName();
+
+        // Update email
+        updateEmail();
+
+        // Update address
+        updateEmail();
+
         // Update profile information
-        updateProfile();
+        updateAddress();
 
         // Switch to driver
         switchDriver();
@@ -133,43 +137,70 @@ public class UserSettingsFragment extends Fragment {
         }
     }
 
-    // Set listener to update profile
-    private void updateProfile() {
-        buttonChangeProfile.setOnClickListener(new View.OnClickListener() {
+    // TODO: PICTURE INTENT
+    // Set listener to update picture
+    private void updatePicture() {
+        buttonChangePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentUser.put(KEY_NAME, editTextUserName.getText().toString());
-                currentUser.setUsername(editTextUserEmail.getText().toString());
-                currentUser.setEmail(editTextUserEmail.getText().toString());
+                Log.i(TAG, "update picture button clicked.");
+            }
+        });
+    }
 
+    // Set listener to update name
+    private void updateName() {
+        buttonChangeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editTextUserName.getText().toString() != null || !editTextUserName.getText().toString().isEmpty()){
+                    currentUser.put(KEY_NAME, editTextUserName.getText().toString());
+                    currentUser.saveInBackground();
+                    Toast.makeText(getContext(),"Updated name.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getContext(),"Please do not leave your name blank.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Set listener to update email
+    private void updateEmail() {
+        buttonChangeEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editTextUserEmail.getText().toString() != null || !editTextUserEmail.getText().toString().isEmpty()){
+                    currentUser.setUsername(editTextUserEmail.getText().toString());
+                    currentUser.setEmail(editTextUserEmail.getText().toString());
+                    currentUser.saveInBackground();
+                    Toast.makeText(getContext(),"Updated email.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getContext(),"Please do not leave your email blank.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Set listener to update profile
+    private void updateAddress() {
+        buttonChangeAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 String address = editTextAddress.getText().toString();
 
                 if(address != null || !address.isEmpty()){
                     geocodeAddress(address);
                 }
-
-                currentUser.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if(e != null){
-                            Log.e(TAG, "Error while saving", e);
-                            Toast.makeText(getContext(), "Error updating profile!", Toast.LENGTH_SHORT).show();
-                        }
-                        Log.i(TAG, "update profile save was successful!");
-                        Toast.makeText(getContext(), "Updated profile!", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Toast.makeText(getContext(),"Please do not leave your address blank.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-
+    // Converts address to geographical coordinates using the Geocoding API
     private void geocodeAddress(final String address) {
         AsyncHttpClient client = new AsyncHttpClient();
 
         String addressURL = GEOCODE_URL + address.replace(" ", "+") + "&key=" + getString(R.string.google_maps_api_key);
-
-        Log.i(TAG, "addressURL: " + addressURL);
 
         client.get(addressURL, new JsonHttpResponseHandler(){
             @Override
@@ -213,6 +244,8 @@ public class UserSettingsFragment extends Fragment {
         });
     }
 
+    // TODO: Look at license number before proceeding - no user can be a driver without a license (week 4 task)
+    // Switches the user to a driver
     private void switchDriver() {
         buttonDriver.setOnClickListener(new View.OnClickListener() {
             @Override

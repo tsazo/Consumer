@@ -12,25 +12,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.activities.LoginActivity;
-import com.codepath.tsazo.consumer.activities.SignupActivity;
 import com.codepath.tsazo.consumer.activities.UserMainActivity;
-import com.codepath.tsazo.consumer.models.Order;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,7 +35,9 @@ public class DriverSettingsFragment extends Fragment {
     private EditText editTextEmail;
     private ImageView imageViewProfile;
     private ParseUser currentUser;
-    private Button buttonChangeProfile;
+    private Button buttonChangePicture;
+    private Button buttonChangeName;
+    private Button buttonChangeEmail;
     private TextView textViewEarnings;
     private Button buttonCashOut;
     private Button buttonUser;
@@ -79,8 +73,10 @@ public class DriverSettingsFragment extends Fragment {
         editTextName = view.findViewById(R.id.editTextName);
         editTextEmail = view.findViewById(R.id.editTextEmail);
         imageViewProfile = view.findViewById(R.id.imageViewProfile);
-        buttonChangeProfile = view.findViewById(R.id.buttonChangeProfile);
         textViewEarnings = view.findViewById(R.id.textViewEarnings);
+        buttonChangePicture = view.findViewById(R.id.buttonChangePicture);
+        buttonChangeName = view.findViewById(R.id.buttonChangeName);
+        buttonChangeEmail = view.findViewById(R.id.buttonChangeEmail);
         buttonCashOut = view.findViewById(R.id.buttonCashOut);
         buttonUser = view.findViewById(R.id.buttonUser);
 
@@ -92,8 +88,14 @@ public class DriverSettingsFragment extends Fragment {
         // Set values
         setValues();
 
-        // Update profile information
-        updateProfile();
+        // Update picture
+        updatePicture();
+
+        // Update name
+        updateName();
+
+        // Update email
+        updateEmail();
 
         // Cashout earnings
         cashOut();
@@ -103,18 +105,6 @@ public class DriverSettingsFragment extends Fragment {
 
         // Logout button listener
         logout();
-    }
-
-    private void cashOut() {
-        buttonCashOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getContext(), "Processing the money to your bank.", Toast.LENGTH_SHORT).show();
-                currentUser.put(KEY_EARNINGS, 0);
-                textViewEarnings.setText("$0.00");
-                currentUser.saveInBackground();
-            }
-        });
     }
 
     private void setValues() {
@@ -136,7 +126,63 @@ public class DriverSettingsFragment extends Fragment {
 
     }
 
-    // Go to user activity
+    // TODO: PICTURE INTENT
+    // Set listener to update picture
+    private void updatePicture() {
+        buttonChangePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "update picture button clicked.");
+            }
+        });
+    }
+
+    // Set listener to update name
+    private void updateName() {
+        buttonChangeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editTextName.getText().toString() != null || !editTextName.getText().toString().isEmpty()){
+                    currentUser.put(KEY_NAME, editTextName.getText().toString());
+                    currentUser.saveInBackground();
+                    Toast.makeText(getContext(),"Updated name.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getContext(),"Please do not leave your name blank.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Set listener to update email
+    private void updateEmail() {
+        buttonChangeEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editTextEmail.getText().toString() != null || !editTextEmail.getText().toString().isEmpty()){
+                    currentUser.setUsername(editTextEmail.getText().toString());
+                    currentUser.setEmail(editTextEmail.getText().toString());
+                    currentUser.saveInBackground();
+                    Toast.makeText(getContext(),"Updated email.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getContext(),"Please do not leave your email blank.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void cashOut() {
+        buttonCashOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "Processing the money to your bank.", Toast.LENGTH_SHORT).show();
+                currentUser.put(KEY_EARNINGS, 0);
+                textViewEarnings.setText("$0.00");
+                currentUser.saveInBackground();
+            }
+        });
+    }
+
+    // Switches the driver to a user
     private void goUserHome() {
         buttonUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,30 +209,6 @@ public class DriverSettingsFragment extends Fragment {
             }
         });
 
-    }
-
-    // Set listener to update profile
-    private void updateProfile() {
-        buttonChangeProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentUser.put(KEY_NAME, editTextName.getText().toString());
-                currentUser.setUsername(editTextEmail.getText().toString());
-                currentUser.setEmail(editTextEmail.getText().toString());
-
-                currentUser.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if(e != null){
-                            Log.e(TAG, "Error while saving", e);
-                            Toast.makeText(getContext(), "Error updating profile!", Toast.LENGTH_SHORT).show();
-                        }
-                        Log.i(TAG, "update profile save was successful!");
-                        Toast.makeText(getContext(), "Updated profile!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
     }
 
     // Logout button listener

@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:lines="1"
+            android:inputType="textEmailAddress"
             android:ems="10"
             android:hint="Email" />
 
