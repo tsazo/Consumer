@@ -36,7 +36,6 @@ import com.parse.SaveCallback;
 import com.parse.boltsinternal.Task;
 
 import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -44,7 +43,6 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 /**
  * A simple {@link Fragment} subclass.
  */
-@RuntimePermissions
 public class UserComposeFragment extends Fragment {
 
     public static final String TAG = "UserComposeFragment";
@@ -59,15 +57,10 @@ public class UserComposeFragment extends Fragment {
     ParseUser currentUser;
     private float price;
     private String storePlaceId;
-    //private String storeAddress;
     private Double storeLat;
     private Double storeLng;
 
     private final String KEY_ADDRESS = "address";
-
-    //Google Maps fields
-    private final static String KEY_LOCATION = "location";
-    private static Location mCurrentLocation;
 
     public UserComposeFragment() {
         // Required empty public constructor
@@ -150,10 +143,7 @@ public class UserComposeFragment extends Fragment {
                 }
 
 
-                // TODO: Add store chooser to completely finish a proper order request
                 saveOrder(orderNumber, store);
-                //saveOrder(orderNumber, currentUser, store, price);
-                //saveOrder(orderNumber, currentUser, price);
             }
 
         });
@@ -163,11 +153,9 @@ public class UserComposeFragment extends Fragment {
     private ParseStore createStore(String storeName, String storeAddress) {
         ParseStore store = new ParseStore();
 
-        //TODO: Change when I implement geocoding? (a.k.a. converting from coordinates to String addresses)
         ParseGeoPoint parseGeoPoint = new ParseGeoPoint(storeLat,storeLng);
 
         store.setName(storeName);
-        //store.setAddress(storePlaceId);
         store.setAddress(storeAddress);
         store.setLocation(parseGeoPoint);
         store.setPlaceId(storePlaceId);
@@ -190,17 +178,14 @@ public class UserComposeFragment extends Fragment {
     // Sets the values of the stores once user selects a store in StoreActivity
     public void setStore(Store store){
         textViewStoreName.setText(store.name);
-        //textViewStoreAddress.setText(store.lat + "," + store.lng);
         storeLat = Double.valueOf(store.lat);
         storeLng = Double.valueOf(store.lng);
         storePlaceId = store.placeId;
-        //storeAddress = store.address;
 
         textViewStoreAddress.setText(store.address);
     }
 
     // Save the order request to Parse
-    //private void saveOrder(String orderNumber, ParseUser currentUser, ParseStore store, float price) {
     private void saveOrder(String orderNumber, ParseStore store) {
         Order order = new Order();
 
@@ -225,48 +210,7 @@ public class UserComposeFragment extends Fragment {
                 editTextOrder.setText("");
                 textViewStoreName.setText("");
                 textViewStoreAddress.setText("");
-                //textViewPrice.setText("");
             }
         });
-    }
-
-    // Google Maps, retrieve location
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        UserComposeFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
-    }
-
-    @SuppressWarnings({"MissingPermission"})
-    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-    public void getMyLocation() {
-        // Access users current location
-        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
-        locationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            Log.i(TAG, "Location: " + location.toString());
-                            mCurrentLocation = location;
-                            ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-
-                            currentUser.put(KEY_LOCATION, geoPoint);
-                            currentUser.saveInBackground();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Error trying to get last GPS location");
-                        e.printStackTrace();
-                    }
-                });
-    }
-
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
-        super.onSaveInstanceState(savedInstanceState);
     }
 }
