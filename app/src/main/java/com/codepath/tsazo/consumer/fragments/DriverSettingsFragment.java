@@ -44,9 +44,10 @@ public class DriverSettingsFragment extends Fragment {
     private ImageView imageViewProfile;
     private ParseUser currentUser;
     private Button buttonChangeProfile;
+    private TextView textViewEarnings;
+    private Button buttonCashOut;
     private Button buttonUser;
     private Button buttonLogout;
-    private TextView textViewEarnings;
 
     private boolean hasActiveOrder;
 
@@ -80,6 +81,7 @@ public class DriverSettingsFragment extends Fragment {
         imageViewProfile = view.findViewById(R.id.imageViewProfile);
         buttonChangeProfile = view.findViewById(R.id.buttonChangeProfile);
         textViewEarnings = view.findViewById(R.id.textViewEarnings);
+        buttonCashOut = view.findViewById(R.id.buttonCashOut);
         buttonUser = view.findViewById(R.id.buttonUser);
 
         // Gets the person who's logged in
@@ -93,11 +95,26 @@ public class DriverSettingsFragment extends Fragment {
         // Update profile information
         updateProfile();
 
+        // Cashout earnings
+        cashOut();
+
         // Switch to user
         goUserHome();
 
         // Logout button listener
         logout();
+    }
+
+    private void cashOut() {
+        buttonCashOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "Processing the money to your bank.", Toast.LENGTH_SHORT).show();
+                currentUser.put(KEY_EARNINGS, 0);
+                textViewEarnings.setText("$0.00");
+                currentUser.saveInBackground();
+            }
+        });
     }
 
     private void setValues() {
