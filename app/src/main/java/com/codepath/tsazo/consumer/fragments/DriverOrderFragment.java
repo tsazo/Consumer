@@ -1,9 +1,13 @@
 package com.codepath.tsazo.consumer.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -28,9 +32,13 @@ import com.parse.ParseUser;
 
 import java.util.List;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
 /**
  * A simple {@link Fragment} subclass.
  */
+@RuntimePermissions
 public class DriverOrderFragment extends Fragment {
 
     public static final String TAG = "DriverOrderFragment";
@@ -191,9 +199,21 @@ public class DriverOrderFragment extends Fragment {
         });
     }
 
-    private void callUser() {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
-        startActivity(intent);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        DriverOrderFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @NeedsPermission({Manifest.permission.CALL_PHONE})
+    public void callUser() {
+        buttonCallUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
+                startActivity(intent);
+            }
+        });
     }
 
     private void navigateUser() {
