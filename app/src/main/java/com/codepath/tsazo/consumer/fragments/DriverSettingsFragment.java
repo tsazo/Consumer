@@ -153,7 +153,8 @@ public class DriverSettingsFragment extends Fragment {
         buttonChangeProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentUser.setUsername(editTextName.getText().toString());
+                currentUser.put(KEY_NAME, editTextName.getText().toString());
+                currentUser.setUsername(editTextEmail.getText().toString());
                 currentUser.setEmail(editTextEmail.getText().toString());
 
                 currentUser.saveInBackground(new SaveCallback() {
