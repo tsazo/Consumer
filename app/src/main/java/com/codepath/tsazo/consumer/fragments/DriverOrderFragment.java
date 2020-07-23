@@ -54,6 +54,7 @@ public class DriverOrderFragment extends Fragment {
     private FragmentManager fragmentManager;
     private BottomNavigationView bottomNavigationViewDriver;
 
+    private final static String KEY_PHONE_NUMBER = "phoneNumber";
     private final static String KEY_HAS_ORDER = "hasOrder";
     private final static String KEY_EARNINGS = "earnings";
 
@@ -99,6 +100,9 @@ public class DriverOrderFragment extends Fragment {
 
             // Navigate to store
             navigateStore();
+
+            // Call user
+            callUser();
 
             // Navigate to user
             navigateUser();
@@ -185,6 +189,11 @@ public class DriverOrderFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void callUser() {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
+        startActivity(intent);
     }
 
     private void navigateUser() {

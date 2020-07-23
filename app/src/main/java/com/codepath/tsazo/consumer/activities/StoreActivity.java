@@ -40,16 +40,13 @@ public class StoreActivity extends AppCompatActivity {
     private List<Store> stores;
     private StoresAdapter adapter;
     private StoresAdapter.OnStoreSelectedListener listener;
-
-    //Google Maps fields
     private ParseUser currentUser;
-    //private String userAddress;
-    private ParseGeoPoint userLocation;
-    private final static String KEY_LOCATION = "location";
-    private static Location mCurrentLocation;
-    //private final static String KEY_ADDRESS = "address";
+    private String userLocation;
+
     private String FIND_PLACE_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
     private String FIND_PLACE_URL_END = "&radius=16000&type=clothing_store&key="; // a little less than 10 miles radius and clothing store
+
+    private final static String KEY_ADDRESS_COORDS = "addressCoords";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +56,8 @@ public class StoreActivity extends AppCompatActivity {
         client = new AsyncHttpClient();
 
         currentUser = ParseUser.getCurrentUser();
-        userLocation = currentUser.getParseGeoPoint(KEY_LOCATION);
+        userLocation = currentUser.getString(KEY_ADDRESS_COORDS);
 
-        // TODO: Base find nearby search off of address by using Geocode to convert address to coordinates
-        // Possibly convert address to coordinates in user settings
-
-        //userAddress = currentUser.getString(KEY_ADDRESS);
         FIND_PLACE_URL_END += getString(R.string.google_maps_api_key);
 
         // Find the RecyclerView
@@ -100,7 +93,8 @@ public class StoreActivity extends AppCompatActivity {
 
         // Populate the stores recyclerView
     private void getStores(){
-        String placesUrl = FIND_PLACE_URL + userLocation.getLatitude() + "," + userLocation.getLongitude() + FIND_PLACE_URL_END;
+
+        String placesUrl = FIND_PLACE_URL + userLocation + FIND_PLACE_URL_END;
 
         Log.i(TAG, "placesURL: " + placesUrl);
 

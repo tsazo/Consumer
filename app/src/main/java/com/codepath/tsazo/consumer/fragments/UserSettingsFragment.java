@@ -62,6 +62,7 @@ public class UserSettingsFragment extends Fragment {
 
     private static final String KEY_ADDRESS = "address";
     private static final String KEY_LOCATION = "location";
+    private static final String KEY_ADDRESS_COORDS = "addressCoords";
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
     private static final String KEY_IS_DRIVER = "isDriver";
@@ -193,12 +194,13 @@ public class UserSettingsFragment extends Fragment {
 
                     currentUser.put(KEY_ADDRESS, address);
 
-                    currentUser.put(KEY_LOCATION, new ParseGeoPoint(lat, lng));
+                    currentUser.put(KEY_ADDRESS_COORDS, lat + "," + lng);
 
                     currentUser.saveInBackground();
                     Log.i(TAG, address);
                 } catch (JSONException e) {
-                    Log.e(TAG, "Json exception", e);
+                    Toast.makeText(getContext(), "Invalid Address", Toast.LENGTH_SHORT).show();
+                    editTextAddress.setText(currentUser.getString(KEY_ADDRESS));
                     e.printStackTrace();
                 }
             }
