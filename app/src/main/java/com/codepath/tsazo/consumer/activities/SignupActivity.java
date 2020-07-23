@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,11 +38,13 @@ public class SignupActivity extends AppCompatActivity {
     private EditText editTextSignupName;
     private EditText editTextEmail;
     private EditText editTextPassword;
+    private EditText editTextPhone;
     private Button buttonUserSignup;
     private ImageView imageViewProfile;
 
     private final String KEY_PICTURE = "profilePicture";
     private final String KEY_NAME = "name";
+    private final String KEY_NUMBER = "phoneNumber";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
     private File photoFile;
@@ -54,8 +57,11 @@ public class SignupActivity extends AppCompatActivity {
         editTextSignupName = findViewById(R.id.editTextSignupName);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextEmail = findViewById(R.id.editTextEmail);
+        editTextPhone = findViewById(R.id.editTextPhone);
         buttonUserSignup = findViewById(R.id.buttonUserSignup);
         imageViewProfile = findViewById(R.id.imageViewProfile);
+
+        editTextPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         // On take picture, open camera (or even camera roll)
         imageViewProfile.setOnClickListener(new View.OnClickListener() {
@@ -74,12 +80,9 @@ public class SignupActivity extends AppCompatActivity {
                 String name = editTextSignupName.getText().toString();
                 String email = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
+                String phoneNumber = editTextPhone.getText().toString().replaceAll("[^A-Za-z0-9]", "");
 
-                try {
-                    signupUser(name, email, password);
-                } catch (Exception e) {
-                    Toast.makeText(SignupActivity.this, "Please fill out all fields before signing up.", Toast.LENGTH_SHORT).show();
-                }
+                signupUser(name, email, password, phoneNumber);
 
             }
         });
@@ -143,16 +146,15 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     // Checks if the user has entered in signup credentials, if so, user is taken to the MainActivity
-    private void signupUser(String name, String email, String password) {
+    private void signupUser(String name, String email, String password, String phoneNumber) {
         Log.i(TAG, "Attempting to signup user: " + email);
 
         // Create the ParseUser
         final ParseUser user = new ParseUser();
 
         // Set core properties
-        if(email == "" || password == "") {
-            Log.e(TAG, "Not all required fields have been filled out");
-            Toast.makeText(SignupActivity.this, "Not all required fields have been filled out", Toast.LENGTH_SHORT).show();
+        if(email == null || password == null || name == null || phoneNumber == null) {
+            Toast.makeText(SignupActivity.this, "Please fill out all fields before signing up.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -162,25 +164,26 @@ public class SignupActivity extends AppCompatActivity {
 
         // Set custom properties
         user.put(KEY_NAME, name);
+        user.put(KEY_NUMBER, phoneNumber);
 
-        // TODO: Fix bug
-        final ParseFile parseImage = new ParseFile(photoFile);
+        if(photoFile != null){
+            final ParseFile parseImage = new ParseFile(photoFile);
 
-        // Call below signals to save the parseImage in the background, however the default image is still being used
-        // TODO: Fix this bug such that the user can upload a taken photo properly
-        parseImage.saveInBackground(new SaveCallback() {
-            public void done(ParseException e) {
-                // If successful add file to user and signUpInBackground
-                if(e != null){
-                    Log.e(TAG, "Error saving image to Parse", e);
+            // Call below signals to save the parseImage in the background, however the default image is still being used
+            parseImage.saveInBackground(new SaveCallback() {
+                public void done(ParseException e) {
+                    // If successful add file to user and signUpInBackground
+                    if(e != null){
+                        Log.e(TAG, "Error saving image to Parse", e);
+                    }
+
+                    Log.i(TAG, "Saved image to parse");
+                    Log.i(TAG, "The value of parseImage is: "+ parseImage);
+                    user.put(KEY_PICTURE, parseImage);
+                    Log.i(TAG, "Profile picture? " + user.getParseFile(KEY_PICTURE));
                 }
-
-                Log.i(TAG, "Saved image to parse");
-                Log.i(TAG, "The value of parseImage is: "+ parseImage);
-                user.put(KEY_PICTURE, parseImage);
-                Log.i(TAG, "Profile picture? " + user.getParseFile(KEY_PICTURE));
-            }
-        });
+            });
+        }
 
 
         // Invoke signUpInBackground
@@ -188,7 +191,7 @@ public class SignupActivity extends AppCompatActivity {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Issue with signup", e);
-                    Toast.makeText(SignupActivity.this, "Issue with signup!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, "Invalid email/phone number", Toast.LENGTH_SHORT).show();
                     return;
                 }
 

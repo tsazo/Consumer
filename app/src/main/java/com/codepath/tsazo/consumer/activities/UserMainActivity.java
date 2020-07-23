@@ -26,7 +26,7 @@ public class UserMainActivity extends AppCompatActivity {
     public static Activity activity;
     public static UserHomeFragment userHomeFragment;
     private static UserComposeFragment userComposeFragment;
-    private static UserSettingsFragment userSettingsFragment;
+    public static UserSettingsFragment userSettingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

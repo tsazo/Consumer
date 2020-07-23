@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -45,12 +46,15 @@ public class DriverSettingsFragment extends Fragment {
     private Button buttonChangeProfile;
     private Button buttonUser;
     private Button buttonLogout;
+    private TextView textViewEarnings;
+
     private boolean hasActiveOrder;
 
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
     private static final String KEY_IS_DRIVER = "isDriver";
     private static final String KEY_HAS_ORDER = "hasOrder";
+    private static final String KEY_EARNINGS = "earnings";
 
     public DriverSettingsFragment() {
         // Required empty public constructor
@@ -75,15 +79,13 @@ public class DriverSettingsFragment extends Fragment {
         editTextEmail = view.findViewById(R.id.editTextEmail);
         imageViewProfile = view.findViewById(R.id.imageViewProfile);
         buttonChangeProfile = view.findViewById(R.id.buttonChangeProfile);
+        textViewEarnings = view.findViewById(R.id.textViewEarnings);
         buttonUser = view.findViewById(R.id.buttonUser);
 
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
 
-        Log.i(TAG, "calling hasActiveOrder()");
         hasActiveOrder = currentUser.getBoolean(KEY_HAS_ORDER);
-        Log.i(TAG, "done running hasActiveOrder()");
-        Log.i(TAG, String.valueOf(hasActiveOrder));
 
         // Set values
         setValues();
@@ -101,6 +103,7 @@ public class DriverSettingsFragment extends Fragment {
     private void setValues() {
         editTextName.setText(currentUser.getString(KEY_NAME));
         editTextEmail.setText(currentUser.getEmail());
+        textViewEarnings.setText("$"+currentUser.getNumber(KEY_EARNINGS)+".00");
 
         ParseFile image = currentUser.getParseFile(KEY_PROFILE_PIC);
 

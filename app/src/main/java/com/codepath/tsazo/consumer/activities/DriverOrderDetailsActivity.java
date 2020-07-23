@@ -118,8 +118,8 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
         order = Parcels.unwrap(getIntent().getParcelableExtra(Order.class.getSimpleName()));
 
         textViewPrice.setText("$" + order.getPrice() + ".00");
-        textViewStoreName.setText(order.getStore().getName());
-        textViewLocation.setText(order.getStore().getAddress());
+        textViewStoreName.setText("Store: "+ order.getStore().getName());
+        textViewLocation.setText("Address: " + order.getStore().getAddress());
     }
 
     protected void loadMap(GoogleMap googleMap) {

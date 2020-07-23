@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -94,15 +96,13 @@ public class StoreActivity extends AppCompatActivity {
         recyclerViewStores.setAdapter(adapter);
 
         getStores();
-
     }
 
-    // Populate the stores recyclerView
-    private void getStores() {
+        // Populate the stores recyclerView
+    private void getStores(){
         String placesUrl = FIND_PLACE_URL + userLocation.getLatitude() + "," + userLocation.getLongitude() + FIND_PLACE_URL_END;
 
         Log.i(TAG, "placesURL: " + placesUrl);
-        //String placesUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyB33o9qfsYo0BoA_oBOVAxN4XmQaamWIv4";
 
         client.get(placesUrl, new JsonHttpResponseHandler(){
             @Override

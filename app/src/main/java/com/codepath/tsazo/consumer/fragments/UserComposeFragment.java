@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class UserComposeFragment extends Fragment {
     public TextView textViewStoreAddress;
     private TextView textViewPrice;
     private Button buttonPlaceOrder;
+    private ProgressBar pb;
 
     ParseUser currentUser;
     private float price;
@@ -91,6 +93,7 @@ public class UserComposeFragment extends Fragment {
         textViewStoreAddress = view.findViewById(R.id.textViewStoreAddress);
         textViewPrice = view.findViewById(R.id.textViewPrice);
         buttonPlaceOrder = view.findViewById(R.id.buttonPlaceOrder);
+        pb = view.findViewById(R.id.pbLoading);
 
         currentUser = ParseUser.getCurrentUser();
 
@@ -123,7 +126,7 @@ public class UserComposeFragment extends Fragment {
         buttonPlaceOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "Place order button clicked");
+                pb.setVisibility(ProgressBar.VISIBLE);
 
                 String orderNumber = editTextOrder.getText().toString();
                 if(orderNumber.isEmpty()){
@@ -210,6 +213,8 @@ public class UserComposeFragment extends Fragment {
         order.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
+                pb.setVisibility(ProgressBar.INVISIBLE);
+
                 if(e != null){
                     Log.e(TAG, "Error while saving", e);
                     Toast.makeText(getContext(), "Error while saving", Toast.LENGTH_SHORT).show();

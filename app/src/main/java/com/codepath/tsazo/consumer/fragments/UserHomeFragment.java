@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,12 +17,15 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.codepath.tsazo.consumer.activities.DriverMainActivity;
+import com.codepath.tsazo.consumer.activities.UserMainActivity;
 import com.codepath.tsazo.consumer.adapters.OrdersAdapter;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.models.Order;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -51,7 +55,10 @@ public class UserHomeFragment extends Fragment {
     private final String KEY_ADDRESS = "address";
 
     private ParseUser currentUser;
-    private UserHomeFragment fragment;
+
+    // Bottom Navigation fields
+    private FragmentManager fragmentManager;
+    private BottomNavigationView bottomNavigationViewUser;
 
     public UserHomeFragment() {
         // Required empty public constructor
@@ -77,11 +84,18 @@ public class UserHomeFragment extends Fragment {
         // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
         recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
         textViewUserAddress = view.findViewById(R.id.textViewUserAddress);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+        bottomNavigationViewUser = getActivity().findViewById(R.id.bottom_navigation_user);
+
         allOrders = new ArrayList<>();
         adapter = new OrdersAdapter(getContext(), allOrders);
 
         currentUser = ParseUser.getCurrentUser();
-        fragment = this;
+
+        // If User address is null - set an onClick Listener for the User to set their address
+        if(currentUser.getString(KEY_ADDRESS) == null || currentUser.getString(KEY_ADDRESS).isEmpty())
+            setAddress();
 
         if(currentUser.getString(KEY_ADDRESS) != null)
             textViewUserAddress.setText(currentUser.getString(KEY_ADDRESS));
@@ -92,6 +106,21 @@ public class UserHomeFragment extends Fragment {
         recyclerViewOrders.setAdapter(adapter);
 
         queryOrders();
+    }
+
+    // Go to settings fragment to set the delivery address
+    private void setAddress() {
+        textViewUserAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(UserMainActivity.userSettingsFragment == null)
+                    UserMainActivity.fragment = new UserSettingsFragment();
+                else
+                    UserMainActivity.fragment = UserMainActivity.userSettingsFragment;
+                bottomNavigationViewUser.setSelectedItemId(R.id.action_profile);
+                fragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, UserMainActivity.fragment).commit();
+            }
+        });
     }
 
     protected void queryOrders() {

@@ -98,7 +98,6 @@ public class DriverHomeFragment extends Fragment {
         progressBar= view.findViewById(R.id.pbLoading);
         progressBar.setVisibility(ProgressBar.VISIBLE);
 
-        // Need to use view.findViewById as Fragment class doesn't extend View, but rather fragment
         fragmentManager = getActivity().getSupportFragmentManager();
         bottomNavigationViewDriver = getActivity().findViewById(R.id.bottom_navigation_driver);
 
@@ -148,7 +147,10 @@ public class DriverHomeFragment extends Fragment {
 
     // Goes to order fragment
     private void goOrderFragment() {
-        DriverMainActivity.fragment = new DriverOrderFragment();
+        if(DriverMainActivity.driverOrderFragment == null)
+            DriverMainActivity.fragment = new DriverOrderFragment();
+        else
+            DriverMainActivity.fragment = DriverMainActivity.driverOrderFragment;
         bottomNavigationViewDriver.setSelectedItemId(R.id.action_order);
         fragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, DriverMainActivity.fragment).commit();
     }

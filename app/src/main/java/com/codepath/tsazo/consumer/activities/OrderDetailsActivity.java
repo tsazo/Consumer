@@ -49,16 +49,13 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
     // Method to set the values into the views
     private void setValues() {
-
         try {
-            Log.i(TAG, "Store name: "+ order.getStore().get(KEY_STORE_NAME));
-            Log.i(TAG, "Store address: "+ order.getStore().get(KEY_STORE_ADDRESS));
             textViewStoreName.setText(order.getStore().fetchIfNeeded().getString(KEY_STORE_NAME));
             textViewStoreAddress.setText(order.getStore().fetchIfNeeded().getString(KEY_STORE_ADDRESS));
         } catch (Exception e){
             Log.e(TAG, "Cannot fetch store name or address", e);
         }
 
-        textViewOrderNumber.setText(order.getOrderNumber());
+        textViewOrderNumber.setText("Order #: " + order.getOrderNumber());
     }
 }

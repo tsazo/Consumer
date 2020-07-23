@@ -158,7 +158,7 @@ public class DriverOrderFragment extends Fragment {
 
                 textViewStoreName.setText(order.getStore().getName());
                 textViewStoreAddress.setText(order.getStore().getAddress());
-                textViewOrderNumber.setText(order.getOrderNumber());
+                textViewOrderNumber.setText("Order #: " + order.getOrderNumber());
                 textViewUserName.setText(order.getUser().getString("name"));
                 textViewUserAddress.setText(order.getDeliveryAddress());
             }
