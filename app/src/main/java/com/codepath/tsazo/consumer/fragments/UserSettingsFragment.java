@@ -190,6 +190,7 @@ public class UserSettingsFragment extends Fragment {
 
                 if(address != null || !address.isEmpty()){
                     geocodeAddress(address);
+                    return;
                 }
                 Toast.makeText(getContext(),"Please do not leave your address blank.", Toast.LENGTH_SHORT).show();
             }

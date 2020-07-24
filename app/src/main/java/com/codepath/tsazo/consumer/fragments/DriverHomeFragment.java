@@ -178,16 +178,45 @@ public class DriverHomeFragment extends Fragment {
                     return;
                 }
 
+                List<Order> closeOrders = new ArrayList<>();
+
                 for(Order order: orders) {
                     Log.i(TAG, "Order: " + order.getOrderNumber() + ", user: " + order.getUser().getUsername());
+
+                    Double orderLat = order.getStore().getLocation().getLatitude();
+                    Double orderLong = order.getStore().getLocation().getLongitude();
+                    Double userLat = currentUser.getParseGeoPoint(KEY_LOCATION).getLatitude();
+                    Double userLong = currentUser.getParseGeoPoint(KEY_LOCATION).getLongitude();
+
+                    if(calculateDistance(orderLat, orderLong, userLat, userLong) < 10){
+                        closeOrders.add(order);
+                    }
+
                 }
 
-                allOrders.addAll(orders);
+                allOrders.addAll(closeOrders);
                 adapter.notifyDataSetChanged();
                 // run a background job and once complete
                 progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
+    }
+
+    // Calculate distances between two coordinate points
+    private double calculateDistance(double lat1, double long1, double lat2, double long2) {
+        if ((lat1 == lat2) && (long1 == long2)) {
+            return 0;
+        }
+
+        else {
+            double theta = long1 - long2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515;
+
+            return (dist);
+        }
     }
 
     // Google Maps, retrieve location
