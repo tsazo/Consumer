@@ -196,27 +196,23 @@ public class DriverHomeFragment extends Fragment {
 
                 allOrders.addAll(closeOrders);
                 adapter.notifyDataSetChanged();
-                // run a background job and once complete
                 progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }
 
-    // Calculate distances between two coordinate points
+    // Calculate distances between two coordinate points in miles
     private double calculateDistance(double lat1, double long1, double lat2, double long2) {
         if ((lat1 == lat2) && (long1 == long2)) {
             return 0;
         }
+        double theta = long1 - long2;
+        double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+        dist = Math.acos(dist);
+        dist = Math.toDegrees(dist);
+        dist = dist * 60 * 1.1515;
 
-        else {
-            double theta = long1 - long2;
-            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
-            dist = Math.acos(dist);
-            dist = Math.toDegrees(dist);
-            dist = dist * 60 * 1.1515;
-
-            return (dist);
-        }
+        return (dist);
     }
 
     // Google Maps, retrieve location

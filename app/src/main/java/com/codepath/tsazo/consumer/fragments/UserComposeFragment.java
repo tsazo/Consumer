@@ -35,6 +35,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.boltsinternal.Task;
 
+import java.text.DecimalFormat;
+
 import permissions.dispatcher.NeedsPermission;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
@@ -60,7 +62,9 @@ public class UserComposeFragment extends Fragment {
     private Double storeLat;
     private Double storeLng;
 
+    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private final String KEY_ADDRESS = "address";
+    private final String KEY_ADDRESS_COORDS = "addressCoords";
 
     public UserComposeFragment() {
         // Required empty public constructor
@@ -91,8 +95,8 @@ public class UserComposeFragment extends Fragment {
         currentUser = ParseUser.getCurrentUser();
 
         // TODO: FIX DEFAULT PRICE TO BE DEPENDENT ON HOW FAR THE STORE IS TO THE USER
-        price = 3;
-        textViewPrice.setText("$" + price + "0");
+        price = 0;
+        textViewPrice.setText("$" + decimalFormat.format(price));
 
         // Choose store
         chooseStore();
@@ -112,6 +116,42 @@ public class UserComposeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+
+    // Sets the values of the stores once user selects a store in StoreActivity
+    public void setStore(Store store){
+        textViewStoreName.setText(store.name);
+        storeLat = Double.valueOf(store.lat);
+        storeLng = Double.valueOf(store.lng);
+        storePlaceId = store.placeId;
+
+        setPrice();
+
+        textViewStoreAddress.setText(store.address);
+    }
+
+    private void setPrice() {
+        String[] deliveryCoords = currentUser.getString(KEY_ADDRESS_COORDS).split(",");
+
+        double distance = calculateDistance(storeLat, storeLng, Double.valueOf(deliveryCoords[0]), Double.valueOf(deliveryCoords[1]));
+
+        price = 3 + (float) (distance * 0.75);
+        textViewPrice.setText("$" + decimalFormat.format(price));
+    }
+
+    // TODO: consolidate method in it's own java file
+    // Calculate distances between two coordinate points in miles
+    private double calculateDistance(double lat1, double long1, double lat2, double long2) {
+        if ((lat1 == lat2) && (long1 == long2)) {
+            return 0;
+        }
+        double theta = long1 - long2;
+        double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+        dist = Math.acos(dist);
+        dist = Math.toDegrees(dist);
+        dist = dist * 60 * 1.1515;
+
+        return (dist);
     }
 
     // On place order, post order
@@ -141,7 +181,6 @@ public class UserComposeFragment extends Fragment {
                     Toast.makeText(getContext(), "You don't have a delivery address!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
 
                 saveOrder(orderNumber, store);
             }
@@ -175,16 +214,6 @@ public class UserComposeFragment extends Fragment {
         return store;
     }
 
-    // Sets the values of the stores once user selects a store in StoreActivity
-    public void setStore(Store store){
-        textViewStoreName.setText(store.name);
-        storeLat = Double.valueOf(store.lat);
-        storeLng = Double.valueOf(store.lng);
-        storePlaceId = store.placeId;
-
-        textViewStoreAddress.setText(store.address);
-    }
-
     // Save the order request to Parse
     private void saveOrder(String orderNumber, ParseStore store) {
         Order order = new Order();
@@ -210,6 +239,9 @@ public class UserComposeFragment extends Fragment {
                 editTextOrder.setText("");
                 textViewStoreName.setText("");
                 textViewStoreAddress.setText("");
+
+                price = 0;
+                textViewPrice.setText("$" + decimalFormat.format(price));
             }
         });
     }
