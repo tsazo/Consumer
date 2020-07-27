@@ -27,6 +27,8 @@ import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.activities.UserMainActivity;
 import com.codepath.tsazo.consumer.models.Order;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -209,16 +211,15 @@ public class DriverOrderFragment extends Fragment {
         }
     }
 
-    //Start the TrackerService//
+    //Start the TrackerService -- service isnt working
     private void startTrackerService() {
-        getActivity().startService(new Intent(getContext(), TrackingService.class));
+        // Write a message to the database
+        Intent intent = new Intent(getContext(), TrackingService.class);
+        getActivity().startService(intent);
 
-        //Notify the user that tracking has been enabled//
         Toast.makeText(getContext(), "GPS tracking enabled", Toast.LENGTH_SHORT).show();
 
-        // TODO: start gps fragment
-        //Close MainActivity//
-        //finish();
+        // TODO: start gps fragment in USer
     }
 
     // Button to start intent for Google Maps to navigate to the store

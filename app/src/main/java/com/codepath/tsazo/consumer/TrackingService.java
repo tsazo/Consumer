@@ -24,11 +24,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 public class TrackingService extends Service {
-    private static final String TAG = TrackingService.class.getSimpleName();
+    private static final String TAG = "TrackingService";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -38,24 +43,24 @@ public class TrackingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        buildNotification();
+
+        //buildNotification();
         loginToFirebase();
     }
 
-//Create the persistent notification//
-
+    //Create the persistent notification
     private void buildNotification() {
         String stop = "stop";
         registerReceiver(stopReceiver, new IntentFilter(stop));
         PendingIntent broadcastIntent = PendingIntent.getBroadcast(
                 this, 0, new Intent(stop), PendingIntent.FLAG_UPDATE_CURRENT);
 
-// Create the persistent notification//
+        // Create the persistent notification
         Notification.Builder builder = new Notification.Builder(this)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.tracking_enabled_notif))
 
-//Make this notification ongoing so it can’t be dismissed by the user//
+        //Make this notification ongoing so it can’t be dismissed by the user
 
                 .setOngoing(true)
                 .setContentIntent(broadcastIntent)
@@ -67,11 +72,11 @@ public class TrackingService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-//Unregister the BroadcastReceiver when the notification is tapped//
+            //Unregister the BroadcastReceiver when the notification is tapped//
 
             unregisterReceiver(stopReceiver);
 
-//Stop the Service//
+            //Stop the Service//
 
             stopSelf();
         }
@@ -81,10 +86,14 @@ public class TrackingService extends Service {
 
 //Authenticate with Firebase, using the email and password we created earlier//
 
-        String email = getString(R.string.test_email);
-        String password = getString(R.string.test_password);
+        //String email = getString(R.string.test_email);
+        //String password = getString(R.string.test_password);
+        String email = "trinity@gmail.com";
+        String password = "trinity";
 
 //Call OnCompleteListener if the user is signed in successfully//
+
+        Log.i(TAG, "logging in...");
 
         FirebaseAuth.getInstance().signInWithEmailAndPassword(
                 email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -92,11 +101,10 @@ public class TrackingService extends Service {
             public void onComplete(Task<AuthResult> task) {
 
 //If the user has been authenticated...//
-
                 if (task.isSuccessful()) {
 
 //...then call requestLocationUpdates//
-
+                    Log.i(TAG, "logged in and requesting location updates");
                     requestLocationUpdates();
                 } else {
 
@@ -111,6 +119,7 @@ public class TrackingService extends Service {
 //Initiate the request to track the device's location//
 
     private void requestLocationUpdates() {
+        Log.i(TAG, "starting location updates");
         LocationRequest request = new LocationRequest();
 
 //Specify how often your app should request the device’s location//
@@ -134,17 +143,33 @@ public class TrackingService extends Service {
             client.requestLocationUpdates(request, new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
-
+                    Log.i(TAG, "onLocationResult");
 //Get a reference to the database, so your app can perform read and write operations//
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference(path);
-                    Location location = locationResult.getLastLocation();
+                    final Location location = locationResult.getLastLocation();
                     if (location != null) {
 
-//Save the location data to the database//
-
+                        //Save the location data to the database//
                         ref.setValue(location);
                     }
+
+                    // Read from the database
+                    ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // This method is called once with the initial value and again
+                            // whenever data at this location is updated.
+                            String value = dataSnapshot.toString();
+                            Log.d(TAG, "Value is: " + value);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w(TAG, "Failed to read value.", error.toException());
+                        }
+                    });
                 }
             }, null);
         }
