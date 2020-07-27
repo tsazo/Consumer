@@ -1,10 +1,15 @@
 package com.codepath.tsazo.consumer.fragments;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +29,17 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DriverSettingsFragment extends Fragment {
 
-    // TODO: Add XML feeatures here!
     public static final String TAG = "DriverSettingsFragment";
     private EditText editTextName;
     private EditText editTextEmail;
@@ -50,6 +60,9 @@ public class DriverSettingsFragment extends Fragment {
     private static final String KEY_IS_DRIVER = "isDriver";
     private static final String KEY_HAS_ORDER = "hasOrder";
     private static final String KEY_EARNINGS = "earnings";
+
+    // PICK_PHOTO_CODE is a constant integer
+    public final static int PICK_PHOTO_CODE = 1046;
 
     public DriverSettingsFragment() {
         // Required empty public constructor
@@ -133,8 +146,94 @@ public class DriverSettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "update picture button clicked.");
+
+                // Create intent for picking a photo from the gallery
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+                // So as long as the result is not null, it's safe to use the intent.
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    // Bring up gallery to select a photo
+                    startActivityForResult(intent, PICK_PHOTO_CODE);
+                }
             }
         });
+    }
+
+    public Bitmap loadFromUri(Uri photoUri) {
+        Bitmap image = null;
+        try {
+            // check version of Android on device
+            if(Build.VERSION.SDK_INT > 27){
+                // on newer versions of Android, use the new decodeBitmap method
+                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
+                image = ImageDecoder.decodeBitmap(source);
+            } else {
+                // support older versions of Android by using getBitmap
+                image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+    // TODO: Break method down into mutiple methods
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ((data != null) && requestCode == PICK_PHOTO_CODE) {
+            Uri photoUri = data.getData();
+
+            // Load the image located at photoUri into selectedImage
+            Bitmap selectedImage = loadFromUri(photoUri);
+
+            // Load the selected image into a preview
+            imageViewProfile.setImageBitmap(selectedImage);
+
+            //create a file to write bitmap data
+            File f = new File(getContext().getCacheDir(), "new.jpg");
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //Convert bitmap to byte array
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            selectedImage.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+            byte[] bitmapdata = bos.toByteArray();
+
+            //write the bytes in file
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(f);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if(fos != null){
+                final ParseFile parseImage = new ParseFile(f);
+
+                // Call below signals to save the parseImage in the background, however the default image is still being used
+                parseImage.saveInBackground(new SaveCallback() {
+                    public void done(ParseException e) {
+                        // If successful add file to user and signUpInBackground
+                        if(e != null){
+                            Log.e(TAG, "Error saving image to Parse", e);
+                        }
+                        currentUser.put(KEY_PROFILE_PIC, parseImage);
+                        currentUser.saveInBackground();
+                        Toast.makeText(getContext(),"Updated picture.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
     }
 
     // Set listener to update name

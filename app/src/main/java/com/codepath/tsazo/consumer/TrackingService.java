@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -146,12 +147,13 @@ public class TrackingService extends Service {
                     Log.i(TAG, "onLocationResult");
 //Get a reference to the database, so your app can perform read and write operations//
 
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference(path);
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                     final Location location = locationResult.getLastLocation();
                     if (location != null) {
 
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                         //Save the location data to the database//
-                        ref.setValue(location);
+                        ref.setValue(latLng);
                     }
 
                     // Read from the database
@@ -160,8 +162,9 @@ public class TrackingService extends Service {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // This method is called once with the initial value and again
                             // whenever data at this location is updated.
-                            String value = dataSnapshot.toString();
-                            Log.d(TAG, "Value is: " + value);
+                            Double lat = dataSnapshot.child("latitude").getValue(Double.class);
+                            Double lng = dataSnapshot.child("longitude").getValue(Double.class);
+                            Log.d(TAG, "Value is: " + lat + "," + lng);
                         }
 
                         @Override
