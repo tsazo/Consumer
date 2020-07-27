@@ -3,6 +3,7 @@ package com.codepath.tsazo.consumer.fragments;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.TrackingService;
 import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.activities.UserMainActivity;
 import com.codepath.tsazo.consumer.models.Order;
@@ -34,6 +36,8 @@ import java.util.List;
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +65,9 @@ public class DriverOrderFragment extends Fragment {
     // Bottom Navigation fields
     private FragmentManager fragmentManager;
     private BottomNavigationView bottomNavigationViewDriver;
+
+    // GPS Firebase
+    private static final int PERMISSIONS_REQUEST = 100;
 
     private final static String KEY_PHONE_NUMBER = "phoneNumber";
     private final static String KEY_HAS_ORDER = "hasOrder";
@@ -150,6 +157,9 @@ public class DriverOrderFragment extends Fragment {
         buttonPicture.setVisibility(View.VISIBLE);
         buttonCompleteOrder.setVisibility(View.VISIBLE);
 
+        // Check whether GPS tracking is enabled
+        enableTracking();
+
         // Specify which class to query
         final ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
         query.include(Order.KEY_USER);
@@ -177,6 +187,40 @@ public class DriverOrderFragment extends Fragment {
         });
     }
 
+    // Enable tracking such that the user is able to see the driver's location
+    private void enableTracking() {
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+        //Check whether this app has access to the location permission//
+
+        int permission = ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION);
+
+        //If the location permission has been granted, then start the TrackerService
+
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            startTrackerService();
+        } else {
+
+            //If the app doesn’t currently have access to the user’s location, then request access
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST);
+        }
+    }
+
+    //Start the TrackerService//
+    private void startTrackerService() {
+        getActivity().startService(new Intent(getContext(), TrackingService.class));
+
+        //Notify the user that tracking has been enabled//
+        Toast.makeText(getContext(), "GPS tracking enabled", Toast.LENGTH_SHORT).show();
+
+        // TODO: start gps fragment
+        //Close MainActivity//
+        //finish();
+    }
+
     // Button to start intent for Google Maps to navigate to the store
     private void navigateStore() {
         buttonNavigateStore.setOnClickListener(new View.OnClickListener() {
@@ -199,6 +243,7 @@ public class DriverOrderFragment extends Fragment {
         });
     }
 
+    // Location tracking permission
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

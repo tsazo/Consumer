@@ -133,11 +133,10 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
                     .title(order.getStore().getName()));
 
             DriverOrderDetailsActivityPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
-            //DriverOrderDetailsActivityPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(this);
         }
     }
 
-
+    // TODO: Change to just access parse server for location !!
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

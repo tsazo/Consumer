@@ -335,7 +335,9 @@ public class UserSettingsFragment extends Fragment {
                     currentUser.put(KEY_ADDRESS_COORDS, lat + "," + lng);
 
                     currentUser.saveInBackground();
-                    Log.i(TAG, address);
+
+                    Toast.makeText(getContext(),"Updated address.", Toast.LENGTH_SHORT).show();
+
                 } catch (JSONException e) {
                     Toast.makeText(getContext(), "Invalid Address", Toast.LENGTH_SHORT).show();
                     editTextAddress.setText(currentUser.getString(KEY_ADDRESS));
