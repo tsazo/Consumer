@@ -34,6 +34,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import permissions.dispatcher.NeedsPermission;
@@ -63,6 +64,7 @@ public class DriverOrderFragment extends Fragment {
     private boolean hasActiveOrder;
 
     private Order order;
+    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
     // Bottom Navigation fields
     private FragmentManager fragmentManager;
@@ -284,15 +286,15 @@ public class DriverOrderFragment extends Fragment {
     }
 
     // Updates the driver's boolean hasOrder as well as updates order boolean value isDone
-    // TODO: Add earnings value for driver
     private void completeOrder() {
         buttonCompleteOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO: DO a check to see if Driver is at/near delivery address before completing order
                 currentUser.put(KEY_HAS_ORDER, false);
-                Number totalEarnings = (Integer) currentUser.getNumber(KEY_EARNINGS) + (Integer) order.getPrice();
-                currentUser.put(KEY_EARNINGS, totalEarnings);
+                String totalEarnings = "" + (Double.valueOf(decimalFormat.format(currentUser.getNumber(KEY_EARNINGS))) + Double.valueOf(decimalFormat.format(order.getPrice())));
+                Log.i(TAG, totalEarnings);
+                currentUser.put(KEY_EARNINGS, Double.valueOf(totalEarnings));
                 order.setIsDone(true);
 
                 currentUser.saveInBackground();

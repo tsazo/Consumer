@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +55,7 @@ public class DriverSettingsFragment extends Fragment {
     private Button buttonLogout;
 
     private boolean hasActiveOrder;
+    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
@@ -123,7 +125,7 @@ public class DriverSettingsFragment extends Fragment {
     private void setValues() {
         editTextName.setText(currentUser.getString(KEY_NAME));
         editTextEmail.setText(currentUser.getEmail());
-        textViewEarnings.setText("$"+currentUser.getNumber(KEY_EARNINGS)+".00");
+        textViewEarnings.setText("$"+ decimalFormat.format(currentUser.getNumber(KEY_EARNINGS)));
 
         ParseFile image = currentUser.getParseFile(KEY_PROFILE_PIC);
 

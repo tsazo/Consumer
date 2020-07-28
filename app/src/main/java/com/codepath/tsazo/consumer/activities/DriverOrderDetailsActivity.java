@@ -32,6 +32,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.text.DecimalFormat;
+
 import okhttp3.Headers;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
@@ -49,13 +51,12 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
     private Button buttonAcceptOrder;
     private Order order;
     private SupportMapFragment mapFragment;
-    private String FIND_PLACE_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=";
     private GoogleMap driverMap;
     private Location mCurrentLocation;
     public static JSONObject location;
-    private String address;
 
-    private final static String KEY_STORE_NAME = "storeName";
+    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
     private final static String KEY_LOCATION = "location";
     private final static String KEY_HAS_ORDER = "hasOrder";
 
@@ -117,7 +118,7 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
 
         order = Parcels.unwrap(getIntent().getParcelableExtra(Order.class.getSimpleName()));
 
-        textViewPrice.setText("$" + order.getPrice() + ".00");
+        textViewPrice.setText("$" + decimalFormat.format(order.getPrice()));
         textViewStoreName.setText("Store: "+ order.getStore().getName());
         textViewLocation.setText("Address: " + order.getStore().getAddress());
     }

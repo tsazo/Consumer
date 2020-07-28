@@ -94,7 +94,6 @@ public class UserComposeFragment extends Fragment {
 
         currentUser = ParseUser.getCurrentUser();
 
-        // TODO: FIX DEFAULT PRICE TO BE DEPENDENT ON HOW FAR THE STORE IS TO THE USER
         price = 0;
         textViewPrice.setText("$" + decimalFormat.format(price));
 
