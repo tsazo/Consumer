@@ -31,8 +31,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-
 public class TrackingService extends Service {
     private static final String TAG = "TrackingService";
 
@@ -45,28 +43,7 @@ public class TrackingService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        //buildNotification();
         loginToFirebase();
-    }
-
-    //Create the persistent notification
-    private void buildNotification() {
-        String stop = "stop";
-        registerReceiver(stopReceiver, new IntentFilter(stop));
-        PendingIntent broadcastIntent = PendingIntent.getBroadcast(
-                this, 0, new Intent(stop), PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Create the persistent notification
-        Notification.Builder builder = new Notification.Builder(this)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.tracking_enabled_notif))
-
-        //Make this notification ongoing so it can’t be dismissed by the user
-
-                .setOngoing(true)
-                .setContentIntent(broadcastIntent)
-                .setSmallIcon(R.drawable.icon_tracking_enabled);
-        startForeground(1, builder.build());
     }
 
     protected BroadcastReceiver stopReceiver = new BroadcastReceiver() {

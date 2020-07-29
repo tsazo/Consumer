@@ -22,7 +22,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,6 +37,8 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 
 import org.parceler.Parcels;
+
+import kotlin.collections.MapsKt;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -61,7 +65,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private GoogleMap trackingMap;
     private SupportMapFragment mapFragment;
     private DatabaseReference driverLocation;
-    private Double lat, lng;
+//    private Double lat, lng;
+    private static Marker marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,9 +126,15 @@ public class OrderDetailsActivity extends AppCompatActivity {
                         Double lng = dataSnapshot.child("longitude").getValue(Double.class);
                         Log.d(TAG, "Value is: " + lat + "," + lng);
 
-                        trackingMap.addMarker(new MarkerOptions()
+                        if(marker != null){
+                            marker.remove();
+                        }
+
+                        marker = trackingMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat, lng))
                                 .title(order.getDriver().getString(KEY_NAME)));
+
+
 
 //                        trackingMap.setLocationSource(new LocationSource() {
 //                            @Override
