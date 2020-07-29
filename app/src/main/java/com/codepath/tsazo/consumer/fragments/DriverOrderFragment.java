@@ -213,15 +213,13 @@ public class DriverOrderFragment extends Fragment {
         }
     }
 
-    //Start the TrackerService -- service isnt working
+    //Start the TrackerService
     private void startTrackerService() {
         // Write a message to the database
         Intent intent = new Intent(getContext(), TrackingService.class);
         getActivity().startService(intent);
 
         Toast.makeText(getContext(), "GPS tracking enabled", Toast.LENGTH_SHORT).show();
-
-        // TODO: start gps fragment in USer
     }
 
     // Button to start intent for Google Maps to navigate to the store
@@ -290,7 +288,6 @@ public class DriverOrderFragment extends Fragment {
         buttonCompleteOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: DO a check to see if Driver is at/near delivery address before completing order
                 currentUser.put(KEY_HAS_ORDER, false);
                 String totalEarnings = "" + (Double.valueOf(decimalFormat.format(currentUser.getNumber(KEY_EARNINGS))) + Double.valueOf(decimalFormat.format(order.getPrice())));
                 Log.i(TAG, totalEarnings);

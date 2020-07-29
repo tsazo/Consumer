@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class DriverSettingsFragment extends Fragment {
     private Button buttonCashOut;
     private Button buttonUser;
     private Button buttonLogout;
+    private ProgressBar progressBar;
 
     private boolean hasActiveOrder;
     private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
@@ -94,6 +96,8 @@ public class DriverSettingsFragment extends Fragment {
         buttonChangeEmail = view.findViewById(R.id.buttonChangeEmail);
         buttonCashOut = view.findViewById(R.id.buttonCashOut);
         buttonUser = view.findViewById(R.id.buttonUser);
+        progressBar= view.findViewById(R.id.pbLoading);
+
 
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
@@ -141,13 +145,13 @@ public class DriverSettingsFragment extends Fragment {
 
     }
 
-    // TODO: PICTURE INTENT
     // Set listener to update picture
     private void updatePicture() {
         buttonChangePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "update picture button clicked.");
+                progressBar.setVisibility(ProgressBar.VISIBLE);
 
                 // Create intent for picking a photo from the gallery
                 Intent intent = new Intent(Intent.ACTION_PICK,
@@ -193,49 +197,58 @@ public class DriverSettingsFragment extends Fragment {
             // Load the selected image into a preview
             imageViewProfile.setImageBitmap(selectedImage);
 
-            //create a file to write bitmap data
-            File f = new File(getContext().getCacheDir(), "new.jpg");
-            try {
-                f.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //Convert bitmap to byte array
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            selectedImage.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-            byte[] bitmapdata = bos.toByteArray();
-
-            //write the bytes in file
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(f);
-                fos.write(bitmapdata);
-                fos.flush();
-                fos.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if(fos != null){
-                final ParseFile parseImage = new ParseFile(f);
-
-                // Call below signals to save the parseImage in the background, however the default image is still being used
-                parseImage.saveInBackground(new SaveCallback() {
-                    public void done(ParseException e) {
-                        // If successful add file to user and signUpInBackground
-                        if(e != null){
-                            Log.e(TAG, "Error saving image to Parse", e);
-                        }
-                        currentUser.put(KEY_PROFILE_PIC, parseImage);
-                        currentUser.saveInBackground();
-                        Toast.makeText(getContext(),"Updated picture.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+            //create and save file into Parse
+            createImageFile(selectedImage);
         }
+    }
+
+    private void createImageFile(Bitmap selectedImage) {
+        File f = new File(getContext().getCacheDir(), "new.jpg");
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Convert bitmap to byte array
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        selectedImage.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+        //write the bytes in file
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(f);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(fos != null)
+            saveImageFile(f);
+    }
+
+    // Saves new image into Parse
+    private void saveImageFile(File f) {
+        final ParseFile parseImage = new ParseFile(f);
+
+        // Call below signals to save the parseImage in the background, however the default image is still being used
+        parseImage.saveInBackground(new SaveCallback() {
+                public void done(ParseException e) {
+                    // If successful add file to user and signUpInBackground
+                    if(e != null){
+                        Log.e(TAG, "Error saving image to Parse", e);
+                    }
+                    currentUser.put(KEY_PROFILE_PIC, parseImage);
+                    currentUser.saveInBackground();
+                    Toast.makeText(getContext(),"Updated picture.", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(ProgressBar.INVISIBLE);
+                }
+        });
     }
 
     // Set listener to update name
@@ -243,13 +256,16 @@ public class DriverSettingsFragment extends Fragment {
         buttonChangeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(ProgressBar.VISIBLE);
                 if(editTextName.getText().toString() != null || !editTextName.getText().toString().isEmpty()){
                     currentUser.put(KEY_NAME, editTextName.getText().toString());
                     currentUser.saveInBackground();
                     Toast.makeText(getContext(),"Updated name.", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(ProgressBar.INVISIBLE);
                     return;
                 }
                 Toast.makeText(getContext(),"Please do not leave your name blank.", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }
@@ -259,14 +275,17 @@ public class DriverSettingsFragment extends Fragment {
         buttonChangeEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(ProgressBar.VISIBLE);
                 if(editTextEmail.getText().toString() != null || !editTextEmail.getText().toString().isEmpty()){
                     currentUser.setUsername(editTextEmail.getText().toString());
                     currentUser.setEmail(editTextEmail.getText().toString());
                     currentUser.saveInBackground();
                     Toast.makeText(getContext(),"Updated email.", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(ProgressBar.INVISIBLE);
                     return;
                 }
                 Toast.makeText(getContext(),"Please do not leave your email blank.", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }
@@ -275,10 +294,12 @@ public class DriverSettingsFragment extends Fragment {
         buttonCashOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(ProgressBar.VISIBLE);
                 Toast.makeText(getContext(), "Processing the money to your bank.", Toast.LENGTH_SHORT).show();
                 currentUser.put(KEY_EARNINGS, 0);
                 textViewEarnings.setText("$0.00");
                 currentUser.saveInBackground();
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
     }

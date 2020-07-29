@@ -76,8 +76,7 @@ public class UserHomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Setup any handles to view objects here
-        // on some click or some loading we need to wait for...
+
         progressBar= view.findViewById(R.id.pbLoading);
         progressBar.setVisibility(ProgressBar.VISIBLE);
 
