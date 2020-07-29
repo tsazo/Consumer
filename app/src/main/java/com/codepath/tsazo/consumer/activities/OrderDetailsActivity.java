@@ -65,7 +65,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private GoogleMap trackingMap;
     private SupportMapFragment mapFragment;
     private DatabaseReference driverLocation;
-//    private Double lat, lng;
     private static Marker marker;
 
     @Override
@@ -117,49 +116,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 textViewDriver.setText(order.getDriver().fetchIfNeeded().getString(KEY_NAME));
                 driverLocation = FirebaseDatabase.getInstance().getReference();
 
-                driverLocation.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // This method is called once with the initial value and again
-                        // whenever data at this location is updated.
-                        Double lat = dataSnapshot.child("latitude").getValue(Double.class);
-                        Double lng = dataSnapshot.child("longitude").getValue(Double.class);
-                        Log.d(TAG, "Value is: " + lat + "," + lng);
-
-                        if(marker != null){
-                            marker.remove();
-                        }
-
-                        marker = trackingMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(lat, lng))
-                                .title(order.getDriver().getString(KEY_NAME)));
-
-
-
-//                        trackingMap.setLocationSource(new LocationSource() {
-//                            @Override
-//                            public void activate(OnLocationChangedListener onLocationChangedListener) {
-//                                onLocationChangedListener.onLocationChanged(location);
-//                                Log.i(TAG, "location: " + location);
-//                            }
-//
-//                            @Override
-//                            public void deactivate() {
-//
-//                            }
-//                        });
-
-//                        Location location = new Location(LocationManager.GPS_PROVIDER);
-//                        location.setLatitude(lat);
-//                        location.setLatitude(lng);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.w(TAG, "Failed to read value.", error.toException());
-                    }
-                });
+                updateDriverLocation();
 
             } catch (Exception e){
                 Log.e(TAG, "Cannot fetch driver name", e);
@@ -167,12 +124,40 @@ public class OrderDetailsActivity extends AppCompatActivity {
         } else {
             textViewDriver.setVisibility(View.GONE);
             buttonCallDriver.setVisibility(View.GONE);
-            //mapFragment.setVisibility(View.GONE);
         }
 
         textViewOrderNumber.setText("Order #: " + order.getOrderNumber());
     }
 
+    // Updates the driver location when they are within the app
+    private void updateDriverLocation() {
+        driverLocation.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                Double lat = dataSnapshot.child("latitude").getValue(Double.class);
+                Double lng = dataSnapshot.child("longitude").getValue(Double.class);
+                Log.d(TAG, "Value is: " + lat + "," + lng);
+
+                if(marker != null){
+                    marker.remove();
+                }
+
+                marker = trackingMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(lat, lng))
+                        .title(order.getDriver().getString(KEY_NAME)));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+    // Loads the Google map for the user to see the store and driver location.
     protected void loadMap(GoogleMap googleMap) {
         trackingMap = googleMap;
         if (trackingMap != null) {
@@ -185,41 +170,4 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
         }
     }
-
-//    private void getDriverLocation() {
-//        trackingMap.setLocationSource(new LocationSource() {
-//            @Override
-//            public void activate(final OnLocationChangedListener onLocationChangedListener) {
-//
-//                driverLocation.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        // This method is called once with the initial value and again
-//                        // whenever data at this location is updated.
-//                        Double lat = dataSnapshot.child("latitude").getValue(Double.class);
-//                        Double lng = dataSnapshot.child("longitude").getValue(Double.class);
-//                        Log.d(TAG, "Value is: " + lat + "," + lng);
-//
-//                        Location location = new Location(LocationManager.GPS_PROVIDER);
-//                        location.setLatitude(lat);
-//                        location.setLatitude(lng);
-//                        onLocationChangedListener.onLocationChanged(location);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError error) {
-//                        // Failed to read value
-//                        Log.w(TAG, "Failed to read value.", error.toException());
-//                    }
-//                });
-//
-//            }
-//
-//            @Override
-//            public void deactivate() {
-//
-//            }
-//        });
-//        trackingMap.getUiSettings().setMyLocationButtonEnabled(true);
-//    }
 }
