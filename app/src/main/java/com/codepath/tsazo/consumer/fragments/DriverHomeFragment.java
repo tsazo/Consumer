@@ -156,7 +156,6 @@ public class DriverHomeFragment extends Fragment {
     }
 
     // Get all orders within 10 miles of driver
-    // TODO: connect driver to geopoint/location
     protected void queryOrders() {
         Log.i(TAG, "Checking if location is null @query orders");
 

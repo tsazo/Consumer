@@ -1,6 +1,8 @@
 package com.codepath.tsazo.consumer.fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -72,6 +74,7 @@ public class DriverOrderFragment extends Fragment {
 
     // GPS Firebase
     private static final int PERMISSIONS_REQUEST = 100;
+    private static final int REQUEST_CODE = 123;
 
     private final static String KEY_PHONE_NUMBER = "phoneNumber";
     private final static String KEY_HAS_ORDER = "hasOrder";
@@ -121,7 +124,7 @@ public class DriverOrderFragment extends Fragment {
             navigateStore();
 
             // Call user
-            callUser();
+            callUserPermission();
 
             // Navigate to user
             navigateUser();
@@ -252,14 +255,44 @@ public class DriverOrderFragment extends Fragment {
     }
 
     @NeedsPermission({Manifest.permission.CALL_PHONE})
-    public void callUser() {
+    private void callUserPermission() {
         buttonCallUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
-                startActivity(intent);
+
+                if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    // when permission is not granted
+                    if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CALL_PHONE)){
+                        // Create AlertDialog
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("Grant phone call permission");
+                        builder.setMessage("Call User");
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE},REQUEST_CODE);
+
+                                callUser();
+                            }
+                        });
+
+                        builder.setNegativeButton("Cancel", null);
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    } else {
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE},REQUEST_CODE);
+                    }
+                } else {
+                    callUser();
+                }
             }
         });
+    }
+
+    private void callUser(){
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
+        startActivity(intent);
     }
 
     private void navigateUser() {
