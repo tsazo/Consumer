@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.activities.LoginActivity;
 import com.codepath.tsazo.consumer.activities.UserMainActivity;
 import com.parse.ParseException;
@@ -167,32 +168,13 @@ public class DriverSettingsFragment extends Fragment {
         });
     }
 
-    public Bitmap loadFromUri(Uri photoUri) {
-        Bitmap image = null;
-        try {
-            // check version of Android on device
-            if(Build.VERSION.SDK_INT > 27){
-                // on newer versions of Android, use the new decodeBitmap method
-                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
-                image = ImageDecoder.decodeBitmap(source);
-            } else {
-                // support older versions of Android by using getBitmap
-                image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
-
-    // TODO: Break method down into mutiple methods
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((data != null) && requestCode == PICK_PHOTO_CODE) {
             Uri photoUri = data.getData();
 
             // Load the image located at photoUri into selectedImage
-            Bitmap selectedImage = loadFromUri(photoUri);
+            Bitmap selectedImage = User.loadFromUri(photoUri, getContext());
 
             // Load the selected image into a preview
             imageViewProfile.setImageBitmap(selectedImage);

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.models.Order;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
@@ -67,9 +68,13 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private DatabaseReference driverLocation;
     private static Marker marker;
 
+    // Cal permission
+    private static final int REQUEST_CODE = 123;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_order_details);
 
         textViewStoreName = findViewById(R.id.textViewStoreName);
@@ -90,11 +95,11 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
         // Unwrap the movie passed in via intent, using its simple name as a key
         order = (Order) Parcels.unwrap(getIntent().getParcelableExtra(Order.class.getSimpleName()));
-        Log.i(TAG, "driver: " + order.getDriver());
-        Log.i(TAG, "isDone: " + order.getIsDone());
 
-        if(order.getDriver() != null && !order.getIsDone())
+        if(order.getDriver() != null && !order.getIsDone()){
             hasActiveDriver = true;
+            User.callPermission(OrderDetailsActivity.this, OrderDetailsActivity.this, REQUEST_CODE);
+        }
 
         setValues();
     }
