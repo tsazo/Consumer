@@ -38,7 +38,7 @@ public class StoreActivity extends AppCompatActivity {
     private AsyncHttpClient client;
     private RecyclerView recyclerViewStores;
     private List<Store> stores;
-    private StoresAdapter adapter;
+    private static StoresAdapter adapter;
     private StoresAdapter.OnStoreSelectedListener listener;
     private ParseUser currentUser;
     private String userLocation;
@@ -119,5 +119,9 @@ public class StoreActivity extends AppCompatActivity {
                 Log.i(TAG, "onFailure! " + response, throwable);
             }
         });
+    }
+
+    public static StoresAdapter getAdapter(){
+        return adapter;
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.activities.MainActivity;
+import com.codepath.tsazo.consumer.activities.StoreActivity;
 import com.codepath.tsazo.consumer.adapters.StoresAdapter;
 
 import org.json.JSONArray;
@@ -97,6 +98,9 @@ public class Store {
                 try {
                     address = jsonObject.getJSONObject("result").getString("formatted_address");
                     listener.onAddressSet(address);
+
+                    // TODO: check if this changes it
+                    StoreActivity.getAdapter().notifyDataSetChanged();
                     Log.i(TAG, address);
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
