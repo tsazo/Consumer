@@ -1,27 +1,18 @@
 package com.codepath.tsazo.consumer.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.adapters.StoresAdapter;
-import com.codepath.tsazo.consumer.fragments.UserComposeFragment;
+import com.codepath.tsazo.consumer.fragments.ShopperComposeFragment;
 import com.codepath.tsazo.consumer.models.Store;
-import com.parse.Parse;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
 import org.json.JSONException;
@@ -74,7 +65,7 @@ public class StoreActivity extends AppCompatActivity {
                 Log.i(TAG, "Store: "+ selectedStore);
 
                 try {
-                    ((UserComposeFragment)(UserMainActivity.fragment)).setStore(selectedStore);
+                    ((ShopperComposeFragment)(ShopperMainActivity.fragment)).setStore(selectedStore);
                 } catch (Exception e){
                     Log.e(TAG, "Error... ", e);
                 }

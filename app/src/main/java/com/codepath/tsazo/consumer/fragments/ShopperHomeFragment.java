@@ -1,10 +1,7 @@
 package com.codepath.tsazo.consumer.fragments;
 
-import android.Manifest;
-import android.location.Location;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,26 +14,18 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.codepath.tsazo.consumer.activities.DriverMainActivity;
-import com.codepath.tsazo.consumer.activities.UserMainActivity;
+import com.codepath.tsazo.consumer.activities.ShopperMainActivity;
 import com.codepath.tsazo.consumer.adapters.OrdersAdapter;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.models.Order;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -44,9 +33,9 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
  * A simple {@link Fragment} subclass.
  */
 
-public class UserHomeFragment extends Fragment {
+public class ShopperHomeFragment extends Fragment {
 
-    public static final String TAG = "UserHomeFragment";
+    public static final String TAG = "ShopperHomeFragment";
     private ProgressBar progressBar;
     private RecyclerView recyclerViewOrders;
     private TextView textViewUserAddress;
@@ -60,7 +49,7 @@ public class UserHomeFragment extends Fragment {
     private FragmentManager fragmentManager;
     private BottomNavigationView bottomNavigationViewUser;
 
-    public UserHomeFragment() {
+    public ShopperHomeFragment() {
         // Required empty public constructor
     }
 
@@ -112,12 +101,12 @@ public class UserHomeFragment extends Fragment {
         textViewUserAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(UserMainActivity.userSettingsFragment == null)
-                    UserMainActivity.fragment = new UserSettingsFragment();
+                if(ShopperMainActivity.shopperSettingsFragment == null)
+                    ShopperMainActivity.fragment = new ShopperSettingsFragment();
                 else
-                    UserMainActivity.fragment = UserMainActivity.userSettingsFragment;
+                    ShopperMainActivity.fragment = ShopperMainActivity.shopperSettingsFragment;
                 bottomNavigationViewUser.setSelectedItemId(R.id.action_profile);
-                fragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, UserMainActivity.fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.frameLayoutContainer, ShopperMainActivity.fragment).commit();
             }
         });
     }

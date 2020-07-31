@@ -1,8 +1,6 @@
 package com.codepath.tsazo.consumer.fragments;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -19,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +24,8 @@ import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.TrackingService;
 import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.activities.DriverMainActivity;
-import com.codepath.tsazo.consumer.activities.UserMainActivity;
 import com.codepath.tsazo.consumer.models.Order;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -62,7 +56,6 @@ public class DriverOrderFragment extends Fragment {
     private TextView textViewUserAddress;
     private Button buttonCallUser;
     private Button buttonNavigateUser;
-    private Button buttonPicture;
     private Button buttonCompleteOrder;
     private boolean hasActiveOrder;
 
@@ -113,7 +106,6 @@ public class DriverOrderFragment extends Fragment {
         textViewUserAddress = view.findViewById(R.id.textViewUserAddress);
         buttonCallUser = view.findViewById(R.id.buttonCallUser);
         buttonNavigateUser = view.findViewById(R.id.buttonNavigateUser);
-        buttonPicture = view.findViewById(R.id.buttonPicture);
         buttonCompleteOrder = view.findViewById(R.id.buttonCompleteOrder);
 
         // Gets the person who's logged in
@@ -128,7 +120,7 @@ public class DriverOrderFragment extends Fragment {
             navigateStore();
 
             // Call user
-            callUserPermission();
+            callUser();
 
             // Navigate to user
             navigateUser();
@@ -150,7 +142,6 @@ public class DriverOrderFragment extends Fragment {
         textViewUserAddress.setVisibility(View.GONE);
         buttonCallUser.setVisibility(View.GONE);
         buttonNavigateUser.setVisibility(View.GONE);
-        buttonPicture.setVisibility(View.GONE);
         buttonCompleteOrder.setVisibility(View.GONE);
     }
 
@@ -165,7 +156,6 @@ public class DriverOrderFragment extends Fragment {
         textViewUserAddress.setVisibility(View.VISIBLE);
         buttonCallUser.setVisibility(View.VISIBLE);
         buttonNavigateUser.setVisibility(View.VISIBLE);
-        buttonPicture.setVisibility(View.VISIBLE);
         buttonCompleteOrder.setVisibility(View.VISIBLE);
 
         // Check whether GPS tracking is enabled
@@ -229,7 +219,7 @@ public class DriverOrderFragment extends Fragment {
         Toast.makeText(getContext(), "GPS tracking enabled", Toast.LENGTH_SHORT).show();
     }
 
-    // Button to start intent for Google Maps to navigate to the store
+    // Opens Google Maps to navigate to the shopper's chosen store
     private void navigateStore() {
         buttonNavigateStore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,20 +249,17 @@ public class DriverOrderFragment extends Fragment {
     }
 
     @NeedsPermission({Manifest.permission.CALL_PHONE})
-    public void callUserPermission() {
+    private void callUser(){
         buttonCallUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callUser();
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
+                startActivity(intent);
             }
         });
     }
 
-    private void callUser(){
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
-        startActivity(intent);
-    }
-
+    // Opens Google Maps to navigate to the shopper's address
     private void navigateUser() {
         buttonNavigateUser.setOnClickListener(new View.OnClickListener() {
             @Override

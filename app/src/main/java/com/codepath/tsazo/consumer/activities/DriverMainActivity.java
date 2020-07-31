@@ -2,42 +2,17 @@ package com.codepath.tsazo.consumer.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.fragments.DriverHomeFragment;
 import com.codepath.tsazo.consumer.fragments.DriverOrderFragment;
 import com.codepath.tsazo.consumer.fragments.DriverSettingsFragment;
-import com.codepath.tsazo.consumer.fragments.UserComposeFragment;
-import com.codepath.tsazo.consumer.fragments.UserHomeFragment;
-import com.codepath.tsazo.consumer.fragments.UserSettingsFragment;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.ParseGeoPoint;
-import com.parse.ParseUser;
-
-import org.json.JSONObject;
-import org.parceler.Parcels;
-
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 

@@ -138,12 +138,12 @@ public class User {
     }
 
     // Set listener to update name
-    public static void updateName(final Context context, Button buttonChangeName, final EditText editTextUserName, final ParseUser currentUser) {
+    public static void updateName(final Context context, Button buttonChangeName, final EditText editTextName, final ParseUser currentUser) {
         buttonChangeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(editTextUserName.getText().toString() != null || !editTextUserName.getText().toString().isEmpty()){
-                    currentUser.put(KEY_NAME, editTextUserName.getText().toString());
+                if(editTextName.getText().toString() != null || !editTextName.getText().toString().isEmpty()){
+                    currentUser.put(KEY_NAME, editTextName.getText().toString());
                     currentUser.saveInBackground();
                     Toast.makeText(context,"Updated name.", Toast.LENGTH_SHORT).show();
                     return;
@@ -163,6 +163,7 @@ public class User {
                     currentUser.setEmail(editTextEmail.getText().toString());
                     currentUser.saveInBackground();
                     Toast.makeText(context,"Updated email.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 Toast.makeText(context,"Please do not leave your email blank.", Toast.LENGTH_SHORT).show();

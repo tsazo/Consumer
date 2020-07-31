@@ -109,13 +109,6 @@
                 tools:src="@tools:sample/avatars" />
 
             <Button
-                android:id="@+id/buttonPicture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Take picture" />
-
-            <Button
                 android:id="@+id/buttonCompleteOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

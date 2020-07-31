@@ -7,26 +7,24 @@ import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.codepath.tsazo.consumer.R;
-import com.codepath.tsazo.consumer.fragments.UserComposeFragment;
-import com.codepath.tsazo.consumer.fragments.UserHomeFragment;
-import com.codepath.tsazo.consumer.fragments.UserSettingsFragment;
+import com.codepath.tsazo.consumer.fragments.ShopperComposeFragment;
+import com.codepath.tsazo.consumer.fragments.ShopperHomeFragment;
+import com.codepath.tsazo.consumer.fragments.ShopperSettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class UserMainActivity extends AppCompatActivity {
+public class ShopperMainActivity extends AppCompatActivity {
 
-    public static final String TAG = "UserMainActivity";
+    public static final String TAG = "ShopperMainActivity";
     private BottomNavigationView bottomNavigationViewUser;
     public final FragmentManager fragmentManager = getSupportFragmentManager();
     public static Fragment fragment;
     public static Activity activity;
-    public static UserHomeFragment userHomeFragment;
-    private static UserComposeFragment userComposeFragment;
-    public static UserSettingsFragment userSettingsFragment;
+    public static ShopperHomeFragment shopperHomeFragment;
+    private static ShopperComposeFragment shopperComposeFragment;
+    public static ShopperSettingsFragment shopperSettingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,23 +50,23 @@ public class UserMainActivity extends AppCompatActivity {
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_home:
-                                if(userHomeFragment == null)
-                                    userHomeFragment = new UserHomeFragment();
+                                if(shopperHomeFragment == null)
+                                    shopperHomeFragment = new ShopperHomeFragment();
 
-                                fragment = userHomeFragment;
+                                fragment = shopperHomeFragment;
                                 break;
                             case R.id.action_create:
-                                if(userComposeFragment == null)
-                                    userComposeFragment = new UserComposeFragment();
+                                if(shopperComposeFragment == null)
+                                    shopperComposeFragment = new ShopperComposeFragment();
 
-                                fragment = userComposeFragment;
+                                fragment = shopperComposeFragment;
                                 break;
                             case R.id.action_profile:
                             default:
-                                if(userSettingsFragment == null)
-                                    userSettingsFragment = new UserSettingsFragment();
+                                if(shopperSettingsFragment == null)
+                                    shopperSettingsFragment = new ShopperSettingsFragment();
 
-                                fragment = userSettingsFragment;
+                                fragment = shopperSettingsFragment;
                                 break;
                         }
 

@@ -1,12 +1,8 @@
 package com.codepath.tsazo.consumer.fragments;
 
-import android.Manifest;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -25,29 +21,20 @@ import com.codepath.tsazo.consumer.models.Order;
 import com.codepath.tsazo.consumer.models.ParseStore;
 
 import com.codepath.tsazo.consumer.models.Store;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.parse.boltsinternal.Task;
 
 import java.text.DecimalFormat;
-
-import permissions.dispatcher.NeedsPermission;
-
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserComposeFragment extends Fragment {
+public class ShopperComposeFragment extends Fragment {
 
-    public static final String TAG = "UserComposeFragment";
+    public static final String TAG = "ShopperComposeFragment";
     private Button buttonChoose;
     private EditText editTextOrder;
     public TextView textViewStoreName;
@@ -66,7 +53,7 @@ public class UserComposeFragment extends Fragment {
     private final String KEY_ADDRESS = "address";
     private final String KEY_ADDRESS_COORDS = "addressCoords";
 
-    public UserComposeFragment() {
+    public ShopperComposeFragment() {
         // Required empty public constructor
     }
 

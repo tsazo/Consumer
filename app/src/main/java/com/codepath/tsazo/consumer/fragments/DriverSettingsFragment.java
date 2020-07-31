@@ -2,9 +2,7 @@ package com.codepath.tsazo.consumer.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -24,18 +22,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.User;
-import com.codepath.tsazo.consumer.activities.LoginActivity;
-import com.codepath.tsazo.consumer.activities.UserMainActivity;
+import com.codepath.tsazo.consumer.activities.ShopperMainActivity;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DecimalFormat;
 
 /**
@@ -218,7 +210,7 @@ public class DriverSettingsFragment extends Fragment {
                     }
                 });
 
-                Intent i = new Intent(getContext(), UserMainActivity.class);
+                Intent i = new Intent(getContext(), ShopperMainActivity.class);
                 startActivity(i);
                 getActivity().finish();
             }

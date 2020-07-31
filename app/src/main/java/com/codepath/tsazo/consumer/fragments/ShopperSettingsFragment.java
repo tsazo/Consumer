@@ -46,9 +46,9 @@ import okhttp3.Headers;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserSettingsFragment extends Fragment {
+public class ShopperSettingsFragment extends Fragment {
 
-    public static final String TAG = "UserSettingsFragment";
+    public static final String TAG = "ShopperSettingsFragment";
     private EditText editTextUserName;
     private EditText editTextUserEmail;
     private EditText editTextAddress;
@@ -73,7 +73,7 @@ public class UserSettingsFragment extends Fragment {
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
 
-    public UserSettingsFragment() {
+    public ShopperSettingsFragment() {
         // Required empty public constructor
     }
 
