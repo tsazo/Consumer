@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,12 +53,14 @@ public class ShopperSettingsFragment extends Fragment {
     private EditText editTextUserName;
     private EditText editTextUserEmail;
     private EditText editTextAddress;
+    private EditText editTextPhone;
     private ImageView imageViewProfile;
     private ParseUser currentUser;
     private Button buttonChangePicture;
     private Button buttonChangeName;
     private Button buttonChangeEmail;
     private Button buttonChangeAddress;
+    private Button buttonChangePhone;
     private Button buttonDriver;
     private Button buttonLogout;
     private ProgressBar progressBar;
@@ -69,6 +72,7 @@ public class ShopperSettingsFragment extends Fragment {
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
     private static final String KEY_IS_DRIVER = "isDriver";
+    private static final String KEY_PHONE = "phoneNumber";
 
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
@@ -100,11 +104,15 @@ public class ShopperSettingsFragment extends Fragment {
         buttonChangeName = view.findViewById(R.id.buttonChangeName);
         buttonChangeEmail = view.findViewById(R.id.buttonChangeEmail);
         buttonChangeAddress = view.findViewById(R.id.buttonChangeAddress);
+        buttonChangePhone = view.findViewById(R.id.buttonChangePhone);
+        editTextPhone = view.findViewById(R.id.editTextPhone);
         buttonDriver = view.findViewById(R.id.buttonDriver);
         progressBar = view.findViewById(R.id.pbLoading);
 
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
+
+        editTextPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         // Set values
         setValues();
@@ -117,6 +125,9 @@ public class ShopperSettingsFragment extends Fragment {
 
         // Update email
         User.updateEmail(getContext(), buttonChangeEmail, editTextUserEmail, currentUser);
+
+        // Update phone
+        User.updatePhone(getContext(), buttonChangePhone, editTextPhone, currentUser);
 
         // Update address
         updateAddress();
@@ -131,6 +142,7 @@ public class ShopperSettingsFragment extends Fragment {
     private void setValues() {
         editTextUserName.setText(currentUser.getString(KEY_NAME));
         editTextUserEmail.setText(currentUser.getEmail());
+        editTextPhone.setText(currentUser.getString(KEY_PHONE));
 
         String address = currentUser.getString(KEY_ADDRESS);
 

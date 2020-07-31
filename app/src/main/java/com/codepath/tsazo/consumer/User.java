@@ -41,6 +41,7 @@ public class User {
 
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
+    private static final String KEY_PHONE = "phoneNumber";
 
     // Calculate distances between two coordinate points in miles
     public static double calculateDistance(double lat1, double long1, double lat2, double long2) {
@@ -181,6 +182,23 @@ public class User {
                 }
 
                 Toast.makeText(context,"Please do not leave your email blank.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Set listener to update phone number
+    public static void updatePhone(final Context context, Button buttonChangePhone, final EditText editTextPhone, final ParseUser currentUser) {
+        buttonChangePhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editTextPhone.getText().toString() != null || !editTextPhone.getText().toString().isEmpty()){
+                    currentUser.put(KEY_PHONE, editTextPhone.getText().toString());
+                    currentUser.saveInBackground();
+                    Toast.makeText(context,"Updated phone number.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Toast.makeText(context,"Please do not leave your phone blank.", Toast.LENGTH_SHORT).show();
             }
         });
     }

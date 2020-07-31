@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,11 +39,13 @@ public class DriverSettingsFragment extends Fragment {
     public static final String TAG = "DriverSettingsFragment";
     private EditText editTextName;
     private EditText editTextEmail;
+    private EditText editTextPhone;
     private ImageView imageViewProfile;
     private ParseUser currentUser;
     private Button buttonChangePicture;
     private Button buttonChangeName;
     private Button buttonChangeEmail;
+    private Button buttonChangePhone;
     private TextView textViewEarnings;
     private Button buttonCashOut;
     private Button buttonUser;
@@ -54,6 +57,7 @@ public class DriverSettingsFragment extends Fragment {
 
     private static final String KEY_PROFILE_PIC = "profilePicture";
     private static final String KEY_NAME = "name";
+    private static final String KEY_PHONE = "phoneNumber";
     private static final String KEY_IS_DRIVER = "isDriver";
     private static final String KEY_HAS_ORDER = "hasOrder";
     private static final String KEY_EARNINGS = "earnings";
@@ -87,6 +91,8 @@ public class DriverSettingsFragment extends Fragment {
         buttonChangePicture = view.findViewById(R.id.buttonChangePicture);
         buttonChangeName = view.findViewById(R.id.buttonChangeName);
         buttonChangeEmail = view.findViewById(R.id.buttonChangeEmail);
+        buttonChangePhone = view.findViewById(R.id.buttonChangePhone);
+        editTextPhone = view.findViewById(R.id.editTextPhone);
         buttonCashOut = view.findViewById(R.id.buttonCashOut);
         buttonUser = view.findViewById(R.id.buttonUser);
         progressBar = view.findViewById(R.id.pbLoading);
@@ -95,6 +101,8 @@ public class DriverSettingsFragment extends Fragment {
         currentUser = ParseUser.getCurrentUser();
 
         hasActiveOrder = currentUser.getBoolean(KEY_HAS_ORDER);
+
+        editTextPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         // Set values
         setValues();
@@ -107,6 +115,9 @@ public class DriverSettingsFragment extends Fragment {
 
         // Update email
         User.updateEmail(getContext(), buttonChangeEmail, editTextEmail, currentUser);
+
+        // Update phone
+        User.updatePhone(getContext(), buttonChangePhone, editTextPhone, currentUser);
 
         // Cashout earnings
         cashOut();
@@ -122,12 +133,12 @@ public class DriverSettingsFragment extends Fragment {
         editTextName.setText(currentUser.getString(KEY_NAME));
         editTextEmail.setText(currentUser.getEmail());
         textViewEarnings.setText("$"+ decimalFormat.format(currentUser.getNumber(KEY_EARNINGS)));
+        editTextPhone.setText(currentUser.getString(KEY_PHONE));
 
         ParseFile image = currentUser.getParseFile(KEY_PROFILE_PIC);
 
         if(image != null) {
             // Binds image to ViewHolder with rounded corners
-
             Glide.with(getContext())
                     .load(currentUser.getParseFile(KEY_PROFILE_PIC).getUrl())
                     .fitCenter()
