@@ -180,57 +180,8 @@ public class DriverSettingsFragment extends Fragment {
             imageViewProfile.setImageBitmap(selectedImage);
 
             //create and save file into Parse
-            createImageFile(selectedImage);
+            User.createImageFile(selectedImage, getContext(), currentUser, progressBar);
         }
-    }
-
-    private void createImageFile(Bitmap selectedImage) {
-        File f = new File(getContext().getCacheDir(), "new.jpg");
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //Convert bitmap to byte array
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        selectedImage.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-        byte[] bitmapdata = bos.toByteArray();
-
-        //write the bytes in file
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(f);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if(fos != null)
-            saveImageFile(f);
-    }
-
-    // Saves new image into Parse
-    private void saveImageFile(File f) {
-        final ParseFile parseImage = new ParseFile(f);
-
-        // Call below signals to save the parseImage in the background, however the default image is still being used
-        parseImage.saveInBackground(new SaveCallback() {
-                public void done(ParseException e) {
-                    // If successful add file to user and signUpInBackground
-                    if(e != null){
-                        Log.e(TAG, "Error saving image to Parse", e);
-                    }
-                    currentUser.put(KEY_PROFILE_PIC, parseImage);
-                    currentUser.saveInBackground();
-                    Toast.makeText(getContext(),"Updated picture.", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(ProgressBar.INVISIBLE);
-                }
-        });
     }
 
     // Set listener to update name
