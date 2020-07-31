@@ -3,41 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:background="@color/colorPrimaryDark"
+    android:layout_margin="5dp"
+    android:background="@drawable/layout_bg"
     android:padding="10dp">
 
     <TextView
         android:id="@+id/textViewStoreName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
         android:text="Store"
-        android:textSize="18sp" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/textViewStoreAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textViewOrderNumber"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/textViewStoreName"
-        android:gravity="center"
+        android:layout_below="@+id/textViewPrice"
+        android:layout_marginTop="5dp"
         android:text="Address" />
 
     <TextView
-        android:id="@+id/textViewOrderNumber"
+        android:id="@+id/textViewPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewStoreName"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="0dp"
         android:layout_marginTop="5dp"
-        tools:text="Number" />
+        android:textSize="24sp"
+        tools:text="$" />
 </RelativeLayout>

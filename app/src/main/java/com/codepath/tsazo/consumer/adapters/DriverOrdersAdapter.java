@@ -18,12 +18,15 @@ import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class DriverOrdersAdapter extends RecyclerView.Adapter<DriverOrdersAdapter.ViewHolder> {
     private static final String TAG = "DriverOrdersAdapter";
     private Context context;
     private List<Order> orders;
+    private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
     private String KEY_STORE_NAME = "storeName";
     private String KEY_STORE_ADDRESS = "address";
 
@@ -62,14 +65,14 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<DriverOrdersAdapte
 
         private TextView textViewStoreName;
         private TextView textViewStoreAddress;
-        private TextView textViewOrderNumber;
+        private TextView textViewPrice;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             textViewStoreName = itemView.findViewById(R.id.textViewStoreName);
             textViewStoreAddress = itemView.findViewById(R.id.textViewStoreAddress);
-            textViewOrderNumber = itemView.findViewById(R.id.textViewOrderNumber);
+            textViewPrice = itemView.findViewById(R.id.textViewPrice);
 
             itemView.setOnClickListener(this);
         }
@@ -88,16 +91,7 @@ public class DriverOrdersAdapter extends RecyclerView.Adapter<DriverOrdersAdapte
                 Log.e(TAG, "Cannot fetch store", e);
             }
 
-            textViewOrderNumber.setText(order.getOrderNumber());
-
-            // TODO: Add image of store given my Google Maps API ??
-//            String profileImage = order.getUser().getParseFile(KEY_PROFILE_PIC).getUrl();
-//            if(profileImage != null) {
-//                Glide.with(context).load(profileImage)
-//                        .fitCenter()
-//                        .circleCrop()
-//                        .into(imageViewProfile);
-//            }
+            textViewPrice.setText("$" + decimalFormat.format(order.getPrice()));
         }
 
         @Override

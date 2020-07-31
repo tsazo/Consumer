@@ -1,20 +1,15 @@
 package com.codepath.tsazo.consumer.fragments;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcel;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.adapters.DriverOrdersAdapter;
 import com.codepath.tsazo.consumer.models.Order;
@@ -38,9 +34,6 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.parceler.Parcels;
-
-import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,7 +180,7 @@ public class DriverHomeFragment extends Fragment {
                     Double userLat = currentUser.getParseGeoPoint(KEY_LOCATION).getLatitude();
                     Double userLong = currentUser.getParseGeoPoint(KEY_LOCATION).getLongitude();
 
-                    if(calculateDistance(orderLat, orderLong, userLat, userLong) < 10){
+                    if(User.calculateDistance(orderLat, orderLong, userLat, userLong) < 10){
                         closeOrders.add(order);
                     }
 
@@ -198,20 +191,6 @@ public class DriverHomeFragment extends Fragment {
                 progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
-    }
-
-    // Calculate distances between two coordinate points in miles
-    private double calculateDistance(double lat1, double long1, double lat2, double long2) {
-        if ((lat1 == lat2) && (long1 == long2)) {
-            return 0;
-        }
-        double theta = long1 - long2;
-        double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
-        dist = Math.acos(dist);
-        dist = Math.toDegrees(dist);
-        dist = dist * 60 * 1.1515;
-
-        return (dist);
     }
 
     // Google Maps, retrieve location

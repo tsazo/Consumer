@@ -210,7 +210,6 @@ public class SignupActivity extends AppCompatActivity {
 
     // Creates a flow (using Intents) to the MainActivity
     private void goLoginActivity() {
-        // Intent(this context, activity I want to navigate to)
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
         finish();

@@ -1,45 +1,29 @@
 package com.codepath.tsazo.consumer.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.drawable.ColorDrawable;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.models.Order;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.parse.ParseException;
-import com.parse.ParseFile;
 
 import org.parceler.Parcels;
-
-import kotlin.collections.MapsKt;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -79,7 +63,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
         textViewStoreName = findViewById(R.id.textViewStoreName);
         textViewStoreAddress = findViewById(R.id.textViewStoreAddress);
-        textViewOrderNumber = findViewById(R.id.textViewOrderNumber);
+        textViewOrderNumber = findViewById(R.id.textViewPrice);
         textViewDriver = findViewById(R.id.textViewDriver);
         buttonCallDriver = findViewById(R.id.buttonCallDriver);
 
@@ -115,9 +99,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
         if(hasActiveDriver){
             try {
-                textViewDriver.setVisibility(View.VISIBLE);
                 buttonCallDriver.setVisibility(View.VISIBLE);
-                //mapFragment.setVisibility(View.VISIBLE);
                 textViewDriver.setText(order.getDriver().fetchIfNeeded().getString(KEY_NAME));
                 driverLocation = FirebaseDatabase.getInstance().getReference();
 
@@ -127,7 +109,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 Log.e(TAG, "Cannot fetch driver name", e);
             }
         } else {
-            textViewDriver.setVisibility(View.GONE);
+            textViewDriver.setText("No driver assigned to order");
             buttonCallDriver.setVisibility(View.GONE);
         }
 

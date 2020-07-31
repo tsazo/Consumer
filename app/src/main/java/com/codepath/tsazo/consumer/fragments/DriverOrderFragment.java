@@ -100,7 +100,7 @@ public class DriverOrderFragment extends Fragment {
         textViewOrderHeader = view.findViewById(R.id.textViewOrderHeader);
         textViewStoreName = view.findViewById(R.id.textViewStoreName);
         textViewStoreAddress = view.findViewById(R.id.textViewStoreAddress);
-        textViewOrderNumber = view.findViewById(R.id.textViewOrderNumber);
+        textViewOrderNumber = view.findViewById(R.id.textViewPrice);
         buttonNavigateStore = view.findViewById(R.id.buttonNavigateStore);
         textViewUserName = view.findViewById(R.id.textViewUserName);
         textViewUserAddress = view.findViewById(R.id.textViewUserAddress);
@@ -132,6 +132,7 @@ public class DriverOrderFragment extends Fragment {
         }
     }
 
+    // Sets all the values to none when no order is found
     private void noOrderValues() {
         textViewOrderHeader.setText("No Current Order");
         textViewStoreName.setVisibility(View.GONE);
@@ -193,12 +194,10 @@ public class DriverOrderFragment extends Fragment {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
 
         //Check whether this app has access to the location permission//
-
         int permission = ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
         //If the location permission has been granted, then start the TrackerService
-
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startTrackerService();
         } else {
@@ -230,6 +229,7 @@ public class DriverOrderFragment extends Fragment {
 
                 // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
                 // Make the Intent explicit by setting the Google Maps package
                 mapIntent.setPackage("com.google.android.apps.maps");
 
@@ -249,7 +249,7 @@ public class DriverOrderFragment extends Fragment {
     }
 
     @NeedsPermission({Manifest.permission.CALL_PHONE})
-    private void callUser(){
+    public void callUser(){
         buttonCallUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -270,6 +270,7 @@ public class DriverOrderFragment extends Fragment {
 
                 // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
                 // Make the Intent explicit by setting the Google Maps package
                 mapIntent.setPackage("com.google.android.apps.maps");
 

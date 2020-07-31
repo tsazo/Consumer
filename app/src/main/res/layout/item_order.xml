@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
-    android:background="@color/colorPrimaryDark"
+    android:background="@drawable/layout_bg"
     android:padding="10dp">
 
     <TextView
@@ -17,28 +17,36 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
-        android:textSize="18sp"
+        android:textSize="24sp"
         tools:text="Store Name" />
 
     <TextView
         android:id="@+id/textViewStoreAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textViewOrderNumber"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/textViewStoreName"
+        android:layout_below="@+id/textViewStoreName"
+        android:layout_marginTop="5dp"
         tools:text="Address" />
 
     <TextView
-        android:id="@+id/textViewOrderNumber"
+        android:id="@+id/textViewPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewStoreName"
+        android:layout_below="@+id/textViewStoreAddress"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="5dp"
         tools:text="Order #" />
+
+    <ImageView
+        android:id="@+id/imageViewDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:foregroundTint="@color/colorPrimaryDark"
+        android:tint="@color/colorPrimaryDark"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_baseline_check_24" />
 </RelativeLayout>

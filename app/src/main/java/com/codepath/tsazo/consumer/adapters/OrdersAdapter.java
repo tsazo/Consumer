@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.activities.OrderDetailsActivity;
 import com.codepath.tsazo.consumer.models.Order;
-import com.parse.ParseException;
 
 import org.parceler.Parcels;
 
@@ -26,7 +27,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
     private List<Order> orders;
     private String KEY_STORE_NAME = "storeName";
     private String KEY_STORE_ADDRESS = "address";
-    private String KEY_IS_DRIVER = "isDriver";
 
     public OrdersAdapter(Context context, List<Order> orders) {
         this.context = context;
@@ -58,13 +58,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
         private TextView textViewStoreName;
         private TextView textViewStoreAddress;
         private TextView textViewOrderNumber;
+        private ImageView imageViewDone;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             textViewStoreName = itemView.findViewById(R.id.textViewStoreName);
             textViewStoreAddress = itemView.findViewById(R.id.textViewStoreAddress);
-            textViewOrderNumber = itemView.findViewById(R.id.textViewOrderNumber);
+            textViewOrderNumber = itemView.findViewById(R.id.textViewPrice);
+            imageViewDone = itemView.findViewById(R.id.imageViewDone);
 
             itemView.setOnClickListener(this);
         }
@@ -77,22 +79,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
                 textViewStoreName.setText(order.getStore().getString(KEY_STORE_NAME));
                 textViewStoreAddress.setText(order.getStore().getString(KEY_STORE_ADDRESS));
 
-                Log.i(TAG, "Store name: "+ order.getStore().get(KEY_STORE_NAME));
-                Log.i(TAG, "Store address: "+ order.getStore().get(KEY_STORE_ADDRESS));
             } catch (Exception e) {
-                Log.e(TAG, "Cannot fetch store", e);
+                Toast.makeText(context, "Cannot fetch store", Toast.LENGTH_SHORT).show();
             }
 
-            textViewOrderNumber.setText(order.getOrderNumber());
+            if(order.getIsDone())
+                imageViewDone.setVisibility(View.VISIBLE);
 
-            // TODO: Add image of store given my Google Maps API ??
-//            String profileImage = order.getUser().getParseFile(KEY_PROFILE_PIC).getUrl();
-//            if(profileImage != null) {
-//                Glide.with(context).load(profileImage)
-//                        .fitCenter()
-//                        .circleCrop()
-//                        .into(imageViewProfile);
-//            }
+            textViewOrderNumber.setText("Order #: " + order.getOrderNumber());
         }
 
         @Override

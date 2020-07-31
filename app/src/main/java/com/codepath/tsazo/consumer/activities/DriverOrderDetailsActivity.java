@@ -28,13 +28,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.ParseUser;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.text.DecimalFormat;
 
-import okhttp3.Headers;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
