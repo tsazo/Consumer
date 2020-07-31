@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
@@ -12,12 +13,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.codepath.tsazo.consumer.activities.LoginActivity;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -35,6 +40,7 @@ import java.io.IOException;
 public class User {
 
     private static final String KEY_PROFILE_PIC = "profilePicture";
+    private static final String KEY_NAME = "name";
 
     public static void callPermission(Context context, final Activity activity, final int REQUEST_CODE){
         if(ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
@@ -61,6 +67,7 @@ public class User {
         }
     }
 
+    // Loads image from camera roll
     public static Bitmap loadFromUri(Uri photoUri, Context context) {
         Bitmap image = null;
         try {
@@ -79,6 +86,7 @@ public class User {
         return image;
     }
 
+    // Creates file to save to Parse
     public static void createImageFile(Bitmap selectedImage, Context context, ParseUser currentUser, ProgressBar  progressBar) {
         File f = new File(context.getCacheDir(), "new.jpg");
         try {
@@ -127,6 +135,46 @@ public class User {
                 progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         });
+    }
+
+    // Set listener to update name
+    public static void updateName(final Context context, Button buttonChangeName, final EditText editTextUserName, final ParseUser currentUser) {
+        buttonChangeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editTextUserName.getText().toString() != null || !editTextUserName.getText().toString().isEmpty()){
+                    currentUser.put(KEY_NAME, editTextUserName.getText().toString());
+                    currentUser.saveInBackground();
+                    Toast.makeText(context,"Updated name.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(context,"Please do not leave your name blank.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Set listener to update email
+    public static void updateEmail(final Context context, Button buttonChangeEmail, final EditText editTextEmail, final ParseUser currentUser) {
+        buttonChangeEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editTextEmail.getText().toString() != null || !editTextEmail.getText().toString().isEmpty()){
+                    currentUser.setUsername(editTextEmail.getText().toString());
+                    currentUser.setEmail(editTextEmail.getText().toString());
+                    currentUser.saveInBackground();
+                    Toast.makeText(context,"Updated email.", Toast.LENGTH_SHORT).show();
+                }
+
+                Toast.makeText(context,"Please do not leave your email blank.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Goes to LoginActivity on click
+    public static void goLoginActivity(Context context, Activity activity) {
+        Intent i = new Intent(context, LoginActivity.class);
+        activity.startActivity(i);
+        activity.finish();
     }
 
 }

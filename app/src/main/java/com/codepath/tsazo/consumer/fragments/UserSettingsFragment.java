@@ -17,12 +17,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.R;
+import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.activities.DriverMainActivity;
 import com.codepath.tsazo.consumer.activities.LoginActivity;
 import com.parse.ParseException;
@@ -58,6 +60,7 @@ public class UserSettingsFragment extends Fragment {
     private Button buttonChangeAddress;
     private Button buttonDriver;
     private Button buttonLogout;
+    private ProgressBar progressBar;
 
     public static final String GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 
@@ -98,6 +101,7 @@ public class UserSettingsFragment extends Fragment {
         buttonChangeEmail = view.findViewById(R.id.buttonChangeEmail);
         buttonChangeAddress = view.findViewById(R.id.buttonChangeAddress);
         buttonDriver = view.findViewById(R.id.buttonDriver);
+        progressBar = view.findViewById(R.id.pbLoading);
 
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
@@ -109,15 +113,12 @@ public class UserSettingsFragment extends Fragment {
         updatePicture();
 
         // Update name
-        updateName();
+        User.updateName(getContext(), buttonChangeName, editTextUserName, currentUser);
 
         // Update email
-        updateEmail();
+        User.updateEmail(getContext(), buttonChangeEmail, editTextUserEmail, currentUser);
 
         // Update address
-        updateEmail();
-
-        // Update profile information
         updateAddress();
 
         // Switch to driver
@@ -151,13 +152,13 @@ public class UserSettingsFragment extends Fragment {
         }
     }
 
-    // TODO: PICTURE INTENT
     // Set listener to update picture
     private void updatePicture() {
         buttonChangePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "update picture button clicked.");
+                progressBar.setVisibility(ProgressBar.VISIBLE);
 
                 // Create intent for picking a photo from the gallery
                 Intent intent = new Intent(Intent.ACTION_PICK,
@@ -173,118 +174,20 @@ public class UserSettingsFragment extends Fragment {
         });
     }
 
-    public Bitmap loadFromUri(Uri photoUri) {
-        Bitmap image = null;
-        try {
-            // check version of Android on device
-            if(Build.VERSION.SDK_INT > 27){
-                // on newer versions of Android, use the new decodeBitmap method
-                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
-                image = ImageDecoder.decodeBitmap(source);
-            } else {
-                // support older versions of Android by using getBitmap
-                image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
-
-    // TODO: Break method down into mutiple methods
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((data != null) && requestCode == PICK_PHOTO_CODE) {
             Uri photoUri = data.getData();
 
             // Load the image located at photoUri into selectedImage
-            Bitmap selectedImage = loadFromUri(photoUri);
+            Bitmap selectedImage = User.loadFromUri(photoUri, getContext());
 
             // Load the selected image into a preview
             imageViewProfile.setImageBitmap(selectedImage);
 
-//            Glide.with(getContext())
-//                    .load(selectedImage)
-//                    .fitCenter()
-//                    .circleCrop()
-//                    .into(imageViewProfile);
-
-            //create a file to write bitmap data
-            File f = new File(getContext().getCacheDir(), "new.jpg");
-            try {
-                f.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //Convert bitmap to byte array
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            selectedImage.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-            byte[] bitmapdata = bos.toByteArray();
-
-            //write the bytes in file
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(f);
-                fos.write(bitmapdata);
-                fos.flush();
-                fos.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if(fos != null){
-                final ParseFile parseImage = new ParseFile(f);
-
-                // Call below signals to save the parseImage in the background, however the default image is still being used
-                parseImage.saveInBackground(new SaveCallback() {
-                    public void done(ParseException e) {
-                        // If successful add file to user and signUpInBackground
-                        if(e != null){
-                            Log.e(TAG, "Error saving image to Parse", e);
-                        }
-                        currentUser.put(KEY_PROFILE_PIC, parseImage);
-                        currentUser.saveInBackground();
-                        Toast.makeText(getContext(),"Updated picture.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+            //create and save file into Parse
+            User.createImageFile(selectedImage, getContext(), currentUser, progressBar);
         }
-    }
-
-    // Set listener to update name
-    private void updateName() {
-        buttonChangeName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editTextUserName.getText().toString() != null || !editTextUserName.getText().toString().isEmpty()){
-                    currentUser.put(KEY_NAME, editTextUserName.getText().toString());
-                    currentUser.saveInBackground();
-                    Toast.makeText(getContext(),"Updated name.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Toast.makeText(getContext(),"Please do not leave your name blank.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    // Set listener to update email
-    private void updateEmail() {
-        buttonChangeEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editTextUserEmail.getText().toString() != null || !editTextUserEmail.getText().toString().isEmpty()){
-                    currentUser.setUsername(editTextUserEmail.getText().toString());
-                    currentUser.setEmail(editTextUserEmail.getText().toString());
-                    currentUser.saveInBackground();
-                    Toast.makeText(getContext(),"Updated email.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Toast.makeText(getContext(),"Please do not leave your email blank.", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     // Set listener to update profile
@@ -387,15 +290,8 @@ public class UserSettingsFragment extends Fragment {
                 ParseUser.logOut();
                 ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be null
 
-                goLoginActivity();
+                User.goLoginActivity(getContext(), getActivity());
             }
         });
-    }
-
-    // Goes to LoginActivity on click
-    private void goLoginActivity() {
-        Intent i = new Intent(getContext(), LoginActivity.class);
-        startActivity(i);
-        getActivity().finish();
     }
 }

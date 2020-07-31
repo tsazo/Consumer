@@ -97,8 +97,7 @@ public class DriverSettingsFragment extends Fragment {
         buttonChangeEmail = view.findViewById(R.id.buttonChangeEmail);
         buttonCashOut = view.findViewById(R.id.buttonCashOut);
         buttonUser = view.findViewById(R.id.buttonUser);
-        progressBar= view.findViewById(R.id.pbLoading);
-
+        progressBar = view.findViewById(R.id.pbLoading);
 
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
@@ -112,10 +111,10 @@ public class DriverSettingsFragment extends Fragment {
         updatePicture();
 
         // Update name
-        updateName();
+        User.updateName(getContext(), buttonChangeName, editTextName, currentUser);
 
         // Update email
-        updateEmail();
+        User.updateEmail(getContext(), buttonChangeEmail, editTextEmail, currentUser);
 
         // Cashout earnings
         cashOut();
@@ -184,45 +183,6 @@ public class DriverSettingsFragment extends Fragment {
         }
     }
 
-    // Set listener to update name
-    private void updateName() {
-        buttonChangeName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressBar.setVisibility(ProgressBar.VISIBLE);
-                if(editTextName.getText().toString() != null || !editTextName.getText().toString().isEmpty()){
-                    currentUser.put(KEY_NAME, editTextName.getText().toString());
-                    currentUser.saveInBackground();
-                    Toast.makeText(getContext(),"Updated name.", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(ProgressBar.INVISIBLE);
-                    return;
-                }
-                Toast.makeText(getContext(),"Please do not leave your name blank.", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(ProgressBar.INVISIBLE);
-            }
-        });
-    }
-
-    // Set listener to update email
-    private void updateEmail() {
-        buttonChangeEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressBar.setVisibility(ProgressBar.VISIBLE);
-                if(editTextEmail.getText().toString() != null || !editTextEmail.getText().toString().isEmpty()){
-                    currentUser.setUsername(editTextEmail.getText().toString());
-                    currentUser.setEmail(editTextEmail.getText().toString());
-                    currentUser.saveInBackground();
-                    Toast.makeText(getContext(),"Updated email.", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(ProgressBar.INVISIBLE);
-                    return;
-                }
-                Toast.makeText(getContext(),"Please do not leave your email blank.", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(ProgressBar.INVISIBLE);
-            }
-        });
-    }
-
     private void cashOut() {
         buttonCashOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,15 +241,8 @@ public class DriverSettingsFragment extends Fragment {
                 ParseUser.logOut();
                 ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be null
 
-                goLoginActivity();
+                User.goLoginActivity(getContext(), getActivity());
             }
         });
-    }
-
-    // Goes to LoginActivity on click
-    private void goLoginActivity() {
-        Intent i = new Intent(getContext(), LoginActivity.class);
-        startActivity(i);
-        getActivity().finish();
     }
 }
