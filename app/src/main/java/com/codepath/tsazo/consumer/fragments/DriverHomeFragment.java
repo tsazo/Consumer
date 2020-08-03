@@ -5,6 +5,7 @@ import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +34,10 @@ import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.skydoves.balloon.ArrowConstraints;
+import com.skydoves.balloon.ArrowOrientation;
+import com.skydoves.balloon.Balloon;
+import com.skydoves.balloon.BalloonAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,11 +122,6 @@ public class DriverHomeFragment extends Fragment {
             }
         });
 
-
-        if(currentUser.getBoolean(KEY_HAS_ORDER)){
-            Toast.makeText(getContext(), "Go to active order", Toast.LENGTH_SHORT).show();
-            return;
-        }
     }
 
     // Reload available orders each time activity is loaded
@@ -133,6 +133,26 @@ public class DriverHomeFragment extends Fragment {
         if(!currentUser.getBoolean(KEY_HAS_ORDER))
             queryOrders();
         else {
+            Balloon balloon = new Balloon.Builder(getContext())
+                    .setArrowSize(10)
+                    .setArrowOrientation(ArrowOrientation.BOTTOM)
+                    .setArrowConstraints(ArrowConstraints.ALIGN_ANCHOR)
+                    .setArrowPosition(0.5f)
+                    .setArrowVisible(true)
+                    .setWidthRatio(1.0f)
+                    .setHeight(65)
+                    .setTextSize(15f)
+                    .setCornerRadius(4f)
+                    .setAlpha(0.9f)
+                    .setText("Go to active order")
+                    .setTextColor(ContextCompat.getColor(getContext(), R.color.text))
+                    .setTextIsHtml(true)
+                    .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
+                    .setBalloonAnimation(BalloonAnimation.FADE)
+                    .build();
+
+            balloon.show(bottomNavigationViewDriver, 0, -10);
+
             textViewOrdersHeader.setText("You Have an Active Order");
             progressBar.setVisibility(ProgressBar.INVISIBLE);
         }

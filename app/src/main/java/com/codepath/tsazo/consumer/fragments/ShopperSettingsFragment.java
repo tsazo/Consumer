@@ -2,9 +2,8 @@ package com.codepath.tsazo.consumer.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
+import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -27,7 +26,6 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.activities.DriverMainActivity;
-import com.codepath.tsazo.consumer.activities.LoginActivity;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -35,12 +33,6 @@ import com.parse.SaveCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import okhttp3.Headers;
 
@@ -85,7 +77,7 @@ public class ShopperSettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_settings, container, false);
+        return inflater.inflate(R.layout.fragment_shopper_settings, container, false);
     }
 
     // This event is triggered soon after onCreateView().

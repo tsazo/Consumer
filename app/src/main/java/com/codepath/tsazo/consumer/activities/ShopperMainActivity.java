@@ -4,12 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.navigation.NavController;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.codepath.tsazo.consumer.R;
@@ -17,11 +14,6 @@ import com.codepath.tsazo.consumer.fragments.ShopperComposeFragment;
 import com.codepath.tsazo.consumer.fragments.ShopperHomeFragment;
 import com.codepath.tsazo.consumer.fragments.ShopperSettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import me.ibrahimsn.lib.SmoothBottomBar;
-
-import static androidx.navigation.Navigation.findNavController;
-import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavController;
 
 public class ShopperMainActivity extends AppCompatActivity {
 
@@ -33,14 +25,17 @@ public class ShopperMainActivity extends AppCompatActivity {
     public static ShopperHomeFragment shopperHomeFragment;
     private static ShopperComposeFragment shopperComposeFragment;
     public static ShopperSettingsFragment shopperSettingsFragment;
-    private SmoothBottomBar smoothBottomBar;
-    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopper_main);
         activity = this;
+
+//        navController = Navigation.findNavController(findViewById(main_fragment));
+//        NavigationUI.setupActionBarWithNavController(this, navController);
+//
+//        smoothBottomBar= findViewById(R.id.bottomBar);
 
         bottomNavigationViewUser = findViewById(R.id.bottom_navigation_user);
 
@@ -55,7 +50,13 @@ public class ShopperMainActivity extends AppCompatActivity {
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        MenuInflater inflater = getMenuInflater();
 //        inflater.inflate(R.menu.menu_smooth_nav_shopper, menu);
-//        //smoothBottomBar.setupWithNavController(menu, navController);
+//        smoothBottomBar.setupWithNavController(menu, navController);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onSupportNavigateUp() {
+//        navController.navigateUp();
 //        return true;
 //    }
 

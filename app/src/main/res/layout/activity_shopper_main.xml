@@ -12,22 +12,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_navigation_user"
-        android:layout_margin="10dp"
-        />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+
         app:menu="@menu/menu_bottom_navigation_user" />
 
+<!--  Needs constraint layout  -->
+<!--    <fragment-->
+<!--        android:id="@+id/main_fragment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
+<!--        app:defaultNavHost="true"-->
+<!--        app:navGraph='@navigation/navigation'-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/bottomBar"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
 <!--    <me.ibrahimsn.lib.SmoothBottomBar-->
-<!--        android:id="@+id/bottom_navigation_user"-->
+<!--        android:id="@+id/bottomBar"-->
 <!--        android:layout_width="match_parent"-->
 <!--        android:layout_height="70dp"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        app:menu="@menu/menu_bottom_navigation_user" />-->
+<!--        app:backgroundColor="@color/colorPrimary"-->
+<!--        app:textColor="@color/colorAccent"-->
+<!--        app:textSize="14sp"-->
+<!--        app:iconSize="24dp"-->
+<!--        app:indicatorColor="#2DFFFFFF"-->
+<!--        app:indicatorRadius="10dp"-->
+<!--        app:sideMargins="10dp"-->
+<!--        app:itemPadding="10dp"-->
+<!--        app:iconTint="#C8FFFFFF"-->
+<!--        app:iconTintActive="#FFFFFF"-->
+<!--        app:menu="@menu/menu_smooth_nav_shopper"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
 
 </RelativeLayout>
 
