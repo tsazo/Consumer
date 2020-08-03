@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -41,6 +42,7 @@ public class SignupActivity extends AppCompatActivity {
     private EditText editTextPhone;
     private Button buttonUserSignup;
     private ImageView imageViewProfile;
+    private ProgressBar progressBar;
 
     private final String KEY_PICTURE = "profilePicture";
     private final String KEY_NAME = "name";
@@ -60,6 +62,7 @@ public class SignupActivity extends AppCompatActivity {
         editTextPhone = findViewById(R.id.editTextPhone);
         buttonUserSignup = findViewById(R.id.buttonUserSignup);
         imageViewProfile = findViewById(R.id.imageViewProfile);
+        progressBar = findViewById(R.id.pbLoading);
 
         editTextPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
@@ -76,7 +79,7 @@ public class SignupActivity extends AppCompatActivity {
         buttonUserSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "Signup button clicked");
+                progressBar.setVisibility(View.VISIBLE);
                 String name = editTextSignupName.getText().toString();
                 String email = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
@@ -181,10 +184,7 @@ public class SignupActivity extends AppCompatActivity {
                         Log.e(TAG, "Error saving image to Parse", e);
                     }
 
-                    Log.i(TAG, "Saved image to parse");
-                    Log.i(TAG, "The value of parseImage is: "+ parseImage);
                     user.put(KEY_PICTURE, parseImage);
-                    Log.i(TAG, "Profile picture? " + user.getParseFile(KEY_PICTURE));
                 }
             });
         }
@@ -200,6 +200,8 @@ public class SignupActivity extends AppCompatActivity {
                 }
 
                 user.saveInBackground();
+
+                progressBar.setVisibility(View.INVISIBLE);
 
                 goLoginActivity();
                 Toast.makeText(SignupActivity.this, "Successfully signed up!", Toast.LENGTH_SHORT).show();

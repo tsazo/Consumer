@@ -32,14 +32,23 @@
                 android:textSize="30sp"
                 tools:text="Current " />
 
+            <ProgressBar
+                android:id="@+id/pbLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/textViewStoreName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="10dp"
-                android:text="Store"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:text="Store" />
 
             <TextView
                 android:id="@+id/textViewStoreAddress"
@@ -47,8 +56,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="5dp"
-                android:text="Store Address"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:text="Store Address" />
 
             <TextView
                 android:id="@+id/textViewPrice"
@@ -56,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="5dp"
-                android:text="Order Number"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:text="Order Number" />
 
             <Button
                 android:id="@+id/buttonNavigateStore"
@@ -73,8 +82,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="30dp"
-                android:text="User Name"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:text="User Name" />
 
             <TextView
                 android:id="@+id/textViewUserAddress"
@@ -82,8 +91,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="5dp"
-                android:text="User Address"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:text="User Address" />
 
             <Button
                 android:id="@+id/buttonCallUser"

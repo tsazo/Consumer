@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +58,7 @@ public class DriverOrderFragment extends Fragment {
     private Button buttonCallUser;
     private Button buttonNavigateUser;
     private Button buttonCompleteOrder;
+    private ProgressBar progressBar;
     private boolean hasActiveOrder;
 
     private Order order;
@@ -107,6 +109,7 @@ public class DriverOrderFragment extends Fragment {
         buttonCallUser = view.findViewById(R.id.buttonCallUser);
         buttonNavigateUser = view.findViewById(R.id.buttonNavigateUser);
         buttonCompleteOrder = view.findViewById(R.id.buttonCompleteOrder);
+        progressBar = view.findViewById(R.id.pbLoading);
 
         // Gets the person who's logged in
         currentUser = ParseUser.getCurrentUser();
@@ -149,6 +152,7 @@ public class DriverOrderFragment extends Fragment {
     // Sets all the values for the current order if there is one.
     private void setValues(View view) {
         textViewOrderHeader.setText("Current Order");
+        progressBar.setVisibility(ProgressBar.VISIBLE);
         textViewStoreName.setVisibility(View.VISIBLE);
         textViewStoreAddress.setVisibility(View.VISIBLE);
         textViewOrderNumber.setVisibility(View.VISIBLE);
@@ -185,6 +189,8 @@ public class DriverOrderFragment extends Fragment {
                 textViewOrderNumber.setText("Order #: " + order.getOrderNumber());
                 textViewUserName.setText(order.getUser().getString("name"));
                 textViewUserAddress.setText(order.getDeliveryAddress());
+
+                progressBar.setVisibility(ProgressBar.GONE);
             }
         });
     }
