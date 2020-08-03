@@ -92,7 +92,11 @@ public class ShopperHomeFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerViewOrders.setLayoutManager(layoutManager);
         recyclerViewOrders.setAdapter(adapter);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         queryOrders();
     }
 

@@ -2,6 +2,8 @@ package com.codepath.tsazo.consumer.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +36,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private String KEY_STORE_NAME = "storeName";
     private String KEY_STORE_ADDRESS = "address";
     private String KEY_NAME = "name";
+    private String KEY_PHONE_NUMBER = "phoneNumber";
 
     // the Post to display
     private Order order;
@@ -103,6 +106,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 textViewDriver.setText(order.getDriver().fetchIfNeeded().getString(KEY_NAME));
                 driverLocation = FirebaseDatabase.getInstance().getReference();
 
+                callDriver();
+
                 updateDriverLocation();
 
             } catch (Exception e){
@@ -114,6 +119,17 @@ public class OrderDetailsActivity extends AppCompatActivity {
         }
 
         textViewOrderNumber.setText("Order #: " + order.getOrderNumber());
+    }
+
+    // Calls the driver
+    private void callDriver() {
+        buttonCallDriver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
+                startActivity(intent);
+            }
+        });
     }
 
     // Updates the driver location when they are within the app
