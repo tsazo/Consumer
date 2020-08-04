@@ -83,8 +83,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
                 Toast.makeText(context, "Cannot fetch store", Toast.LENGTH_SHORT).show();
             }
 
-            if(order.getIsDone())
+            if(order.getIsDone()){
+                Log.i(TAG, "" + order.getIsDone());
                 imageViewDone.setVisibility(View.VISIBLE);
+            } else
+                imageViewDone.setVisibility(View.INVISIBLE);
 
             textViewOrderNumber.setText("Order #: " + order.getOrderNumber());
         }

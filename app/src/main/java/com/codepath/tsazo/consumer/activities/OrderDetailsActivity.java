@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.codepath.tsazo.consumer.R;
@@ -24,8 +25,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
 import org.parceler.Parcels;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -83,12 +90,46 @@ public class OrderDetailsActivity extends AppCompatActivity {
         // Unwrap the movie passed in via intent, using its simple name as a key
         order = (Order) Parcels.unwrap(getIntent().getParcelableExtra(Order.class.getSimpleName()));
 
-        if(order.getDriver() != null && !order.getIsDone()){
-            hasActiveDriver = true;
-            User.callPermission(OrderDetailsActivity.this, OrderDetailsActivity.this, REQUEST_CODE);
-        }
+//        if(order.getDriver() != null && !order.getIsDone()){
+//            hasActiveDriver = true;
+//            User.callPermission(OrderDetailsActivity.this, OrderDetailsActivity.this, REQUEST_CODE);
+//        }
 
-        setValues();
+        //setValues();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        queryOrder();
+    }
+
+    protected void queryOrder() {
+        // Specify which class to query
+        ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
+        query.include(Order.KEY_DONE);
+        query.include(Order.KEY_DRIVER);
+
+        query.whereEqualTo(Order.KEY_DRIVER, order.getDriver());
+        query.whereEqualTo(Order.KEY_DONE, !order.getIsDone());
+
+        query.findInBackground(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> orders, ParseException e) {
+                if(e != null){
+                    Log.e(TAG, "Issue with getting order", e);
+                    return;
+                }
+
+                if(!orders.isEmpty()){
+                    hasActiveDriver = true;
+                    User.callPermission(OrderDetailsActivity.this, OrderDetailsActivity.this, REQUEST_CODE);
+                }
+
+                setValues();
+            }
+        });
     }
 
     // Method to set the values into the views

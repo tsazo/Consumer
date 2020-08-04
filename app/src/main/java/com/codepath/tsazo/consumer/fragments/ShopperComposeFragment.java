@@ -136,6 +136,7 @@ public class ShopperComposeFragment extends Fragment {
                 String orderNumber = editTextOrder.getText().toString();
                 if(orderNumber.isEmpty()){
                     Toast.makeText(getContext(), "Order number cannot be empty.", Toast.LENGTH_SHORT).show();
+                    pb.setVisibility(ProgressBar.INVISIBLE);
                     return;
                 }
 
@@ -144,6 +145,7 @@ public class ShopperComposeFragment extends Fragment {
 
                 if(storeName.isEmpty() || storeAddress.isEmpty()){
                     Toast.makeText(getContext(), "You must choose your store", Toast.LENGTH_SHORT).show();
+                    pb.setVisibility(ProgressBar.INVISIBLE);
                     return;
                 }
 
@@ -151,6 +153,7 @@ public class ShopperComposeFragment extends Fragment {
 
                 if(currentUser.getString(KEY_ADDRESS) == null){
                     Toast.makeText(getContext(), "You don't have a delivery address!", Toast.LENGTH_SHORT).show();
+                    pb.setVisibility(ProgressBar.INVISIBLE);
                     return;
                 }
 
@@ -177,6 +180,7 @@ public class ShopperComposeFragment extends Fragment {
                 if(e != null){
                     Log.e(TAG, "Error while saving", e);
                     Toast.makeText(getContext(), "Error while saving store", Toast.LENGTH_SHORT).show();
+                    pb.setVisibility(ProgressBar.INVISIBLE);
                 }
 
                 Log.i(TAG, "Saving store was successful");
@@ -204,6 +208,7 @@ public class ShopperComposeFragment extends Fragment {
                 if(e != null){
                     Log.e(TAG, "Error while saving", e);
                     Toast.makeText(getContext(), "Error while saving", Toast.LENGTH_SHORT).show();
+                    pb.setVisibility(ProgressBar.INVISIBLE);
                 }
 
                 Toast.makeText(getContext(), "Order created!" , Toast.LENGTH_SHORT).show();
