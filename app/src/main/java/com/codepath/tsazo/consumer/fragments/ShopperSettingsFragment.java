@@ -1,11 +1,14 @@
 package com.codepath.tsazo.consumer.fragments;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -26,8 +29,12 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.activities.DriverMainActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -35,10 +42,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import okhttp3.Headers;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 /**
  * A simple {@link Fragment} subclass.
  */
+@RuntimePermissions
 public class ShopperSettingsFragment extends Fragment {
 
     public static final String TAG = "ShopperSettingsFragment";
@@ -68,6 +80,10 @@ public class ShopperSettingsFragment extends Fragment {
 
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
+
+    //Google Maps fields
+    private static Location mCurrentLocation;
+    private final static String KEY_LOCATION = "location";
 
     public ShopperSettingsFragment() {
         // Required empty public constructor
@@ -138,7 +154,7 @@ public class ShopperSettingsFragment extends Fragment {
 
         String address = currentUser.getString(KEY_ADDRESS);
 
-        if(address != null || !address.isEmpty()){
+        if(address != null && !address.isEmpty()){
             editTextAddress.setText(address);
         }
 
@@ -161,7 +177,6 @@ public class ShopperSettingsFragment extends Fragment {
         buttonChangePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "update picture button clicked.");
                 progressBar.setVisibility(ProgressBar.VISIBLE);
 
                 // Create intent for picking a photo from the gallery
@@ -191,6 +206,8 @@ public class ShopperSettingsFragment extends Fragment {
 
             //create and save file into Parse
             User.createImageFile(selectedImage, getContext(), currentUser, progressBar);
+        } else {
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 
@@ -201,7 +218,7 @@ public class ShopperSettingsFragment extends Fragment {
             public void onClick(View v) {
                 String address = editTextAddress.getText().toString();
 
-                if(address != null || !address.isEmpty()){
+                if(address != null && !address.isEmpty()){
                     geocodeAddress(address);
                     return;
                 }
@@ -260,7 +277,6 @@ public class ShopperSettingsFragment extends Fragment {
         });
     }
 
-    // TODO: Look at license number before proceeding - no user can be a driver without a license (week 4 task)
     // Switches the user to a driver
     private void switchDriver() {
         buttonDriver.setOnClickListener(new View.OnClickListener() {
@@ -277,11 +293,54 @@ public class ShopperSettingsFragment extends Fragment {
                     }
                 });
 
+
+
                 Intent i = new Intent(getContext(), DriverMainActivity.class);
                 startActivity(i);
                 getActivity().finish();
             }
         });
+    }
+
+    // Google Maps, retrieve location
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ShopperSettingsFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    public void getMyLocation() {
+        // Access users current location
+        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
+        locationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            Log.i(TAG, "Location: " + location.toString());
+                            mCurrentLocation = location;
+                            ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+
+                            currentUser.put(KEY_LOCATION, geoPoint);
+                            currentUser.saveInBackground();
+                            //getLocationFromCoords(location.getLatitude(), location.getLongitude());
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Error trying to get last GPS location");
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     // Logout button listener

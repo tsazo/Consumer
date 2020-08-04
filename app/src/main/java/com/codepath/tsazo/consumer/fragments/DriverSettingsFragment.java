@@ -183,6 +183,8 @@ public class DriverSettingsFragment extends Fragment {
 
             //create and save file into Parse
             User.createImageFile(selectedImage, getContext(), currentUser, progressBar);
+        }  else {
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 
@@ -205,8 +207,10 @@ public class DriverSettingsFragment extends Fragment {
         buttonUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBar.setVisibility(ProgressBar.VISIBLE);
                 if(hasActiveOrder){
                     Toast.makeText(getContext(), "You have an active order!", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(ProgressBar.INVISIBLE);
                     return;
                 }
 
@@ -218,6 +222,7 @@ public class DriverSettingsFragment extends Fragment {
                         if(e != null){
                             Log.e(TAG, "Error to switch value to user mode", e);
                         }
+                        progressBar.setVisibility(ProgressBar.INVISIBLE);
                     }
                 });
 

@@ -1,33 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rideCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    android:background="@drawable/layout_bg"
-    android:padding="10dp">
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="10dp"
 
-    <TextView
-        android:id="@+id/textViewStoreName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Store"
-        android:textSize="24sp" />
+    android:background="@color/colorPrimaryDark"
+    android:gravity="left"
+    android:layoutAnimation="@anim/fade_in"
+    app:cardBackgroundColor="#00FFFFFF"
+    app:contentPadding="15dp">
 
-    <TextView
-        android:id="@+id/textViewStoreAddress"
-        android:layout_width="wrap_content"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewPrice"
-        android:layout_marginTop="5dp"
-        android:text="Address" />
+        android:layout_margin="10dp"
+        android:background="@drawable/layout_bg"
+        android:padding="10dp">
 
-    <TextView
-        android:id="@+id/textViewPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewStoreName"
-        android:layout_marginTop="5dp"
-        android:textSize="24sp"
-        tools:text="$" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/textViewStoreName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Store"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/textViewStoreAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewPrice"
+            android:layout_marginTop="5dp"
+            android:text="Address" />
+
+        <TextView
+            android:id="@+id/textViewPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewStoreName"
+            android:layout_marginTop="5dp"
+            android:textSize="24sp"
+            tools:text="$" />
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

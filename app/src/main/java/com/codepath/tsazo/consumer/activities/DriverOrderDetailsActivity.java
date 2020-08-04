@@ -104,7 +104,6 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
                 ParseUser.getCurrentUser().put(KEY_HAS_ORDER, true);
                 ParseUser.getCurrentUser().saveInBackground();
 
-                Toast.makeText(DriverOrderDetailsActivity.this, "Accepted Order!", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -172,7 +171,6 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // TODO: Change to just access parse server for location !!
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
