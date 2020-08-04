@@ -84,7 +84,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
             }
 
             if(order.getIsDone()){
-                Log.i(TAG, "" + order.getIsDone());
                 imageViewDone.setVisibility(View.VISIBLE);
             } else
                 imageViewDone.setVisibility(View.INVISIBLE);
