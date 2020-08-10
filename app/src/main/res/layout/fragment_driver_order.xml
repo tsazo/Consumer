@@ -45,7 +45,7 @@
                 android:id="@+id/textViewStoreName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:textSize="18sp"
                 tools:text="Store" />
@@ -54,7 +54,7 @@
                 android:id="@+id/textViewStoreAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:textSize="18sp"
                 tools:text="Store Address" />
@@ -63,7 +63,7 @@
                 android:id="@+id/textViewPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:textSize="18sp"
                 tools:text="Order Number" />
@@ -72,7 +72,7 @@
                 android:id="@+id/buttonNavigateStore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Navigate to store" />
 
@@ -80,7 +80,7 @@
                 android:id="@+id/textViewUserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
                 android:textSize="18sp"
                 tools:text="User Name" />
@@ -89,7 +89,7 @@
                 android:id="@+id/textViewUserAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:textSize="18sp"
                 tools:text="User Address" />
@@ -98,7 +98,7 @@
                 android:id="@+id/buttonCallUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:text="CALL CONSUMER" />
 
@@ -106,7 +106,7 @@
                 android:id="@+id/buttonNavigateUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Navigate to consumer" />
 
@@ -121,6 +121,7 @@
                 android:id="@+id/buttonCompleteOrder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="0dp"
                 android:text="Complete Order" />

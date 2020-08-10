@@ -130,9 +130,9 @@ public class DriverHomeFragment extends Fragment {
         super.onStart();
         adapter.clear();
 
-        if(!currentUser.getBoolean(KEY_HAS_ORDER))
+        if(!currentUser.getBoolean(KEY_HAS_ORDER) && mCurrentLocation != null)
             queryOrders();
-        else {
+        else if(currentUser.getBoolean(KEY_HAS_ORDER)) {
             Balloon balloon = new Balloon.Builder(getContext())
                     .setArrowSize(10)
                     .setArrowOrientation(ArrowOrientation.BOTTOM)
@@ -236,6 +236,8 @@ public class DriverHomeFragment extends Fragment {
 
                             currentUser.put(KEY_LOCATION, geoPoint);
                             currentUser.saveInBackground();
+
+                            queryOrders();
                             //getLocationFromCoords(location.getLatitude(), location.getLongitude());
                         }
                     }

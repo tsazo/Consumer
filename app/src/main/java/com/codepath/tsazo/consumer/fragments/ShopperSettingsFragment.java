@@ -50,7 +50,6 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 /**
  * A simple {@link Fragment} subclass.
  */
-@RuntimePermissions
 public class ShopperSettingsFragment extends Fragment {
 
     public static final String TAG = "ShopperSettingsFragment";
@@ -80,10 +79,6 @@ public class ShopperSettingsFragment extends Fragment {
 
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
-
-    //Google Maps fields
-    private static Location mCurrentLocation;
-    private final static String KEY_LOCATION = "location";
 
     public ShopperSettingsFragment() {
         // Required empty public constructor
@@ -293,54 +288,11 @@ public class ShopperSettingsFragment extends Fragment {
                     }
                 });
 
-
-
                 Intent i = new Intent(getContext(), DriverMainActivity.class);
                 startActivity(i);
                 getActivity().finish();
             }
         });
-    }
-
-    // Google Maps, retrieve location
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        ShopperSettingsFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
-    }
-
-    @SuppressWarnings({"MissingPermission"})
-    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-    public void getMyLocation() {
-        // Access users current location
-        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
-        locationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            Log.i(TAG, "Location: " + location.toString());
-                            mCurrentLocation = location;
-                            ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-
-                            currentUser.put(KEY_LOCATION, geoPoint);
-                            currentUser.saveInBackground();
-                            //getLocationFromCoords(location.getLatitude(), location.getLongitude());
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Error trying to get last GPS location");
-                        e.printStackTrace();
-                    }
-                });
-    }
-
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     // Logout button listener

@@ -195,7 +195,8 @@ public class SignupActivity extends AppCompatActivity {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Issue with signup", e);
-                    Toast.makeText(SignupActivity.this, "Invalid email/phone number", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
 
