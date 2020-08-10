@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.codepath.tsazo.consumer.activities.ShopperMainActivity;
+import com.codepath.tsazo.consumer.adapters.DriverOrdersAdapter;
 import com.codepath.tsazo.consumer.adapters.OrdersAdapter;
 import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.models.Order;
@@ -97,6 +98,9 @@ public class ShopperHomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        allOrders.clear();
+        Log.i(TAG, "allOrders: "+ allOrders);
         queryOrders();
     }
 

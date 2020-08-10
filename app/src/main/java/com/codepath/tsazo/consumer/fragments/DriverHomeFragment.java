@@ -130,9 +130,7 @@ public class DriverHomeFragment extends Fragment {
         super.onStart();
         adapter.clear();
 
-        if(!currentUser.getBoolean(KEY_HAS_ORDER) && mCurrentLocation != null)
-            queryOrders();
-        else if(currentUser.getBoolean(KEY_HAS_ORDER)) {
+        if(currentUser.getBoolean(KEY_HAS_ORDER)) {
             Balloon balloon = new Balloon.Builder(getContext())
                     .setArrowSize(10)
                     .setArrowOrientation(ArrowOrientation.BOTTOM)
