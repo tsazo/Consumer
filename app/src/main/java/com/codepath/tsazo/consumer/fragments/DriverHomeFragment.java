@@ -128,7 +128,6 @@ public class DriverHomeFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        adapter.clear();
 
         if(currentUser.getBoolean(KEY_HAS_ORDER)) {
             Balloon balloon = new Balloon.Builder(getContext())
@@ -152,6 +151,7 @@ public class DriverHomeFragment extends Fragment {
             balloon.show(bottomNavigationViewDriver, 0, -10);
 
             textViewOrdersHeader.setText("You Have an Active Order");
+            allOrders.clear();
             progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
     }
@@ -235,7 +235,8 @@ public class DriverHomeFragment extends Fragment {
                             currentUser.put(KEY_LOCATION, geoPoint);
                             currentUser.saveInBackground();
 
-                            queryOrders();
+                            if(!currentUser.getBoolean(KEY_HAS_ORDER))
+                                queryOrders();
                             //getLocationFromCoords(location.getLatitude(), location.getLongitude());
                         }
                     }
