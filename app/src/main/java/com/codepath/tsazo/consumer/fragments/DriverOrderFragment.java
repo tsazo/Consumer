@@ -25,6 +25,7 @@ import com.codepath.tsazo.consumer.R;
 import com.codepath.tsazo.consumer.TrackingService;
 import com.codepath.tsazo.consumer.User;
 import com.codepath.tsazo.consumer.activities.DriverMainActivity;
+import com.codepath.tsazo.consumer.activities.OrderDetailsActivity;
 import com.codepath.tsazo.consumer.models.Order;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
@@ -83,9 +84,6 @@ public class DriverOrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        User.callPermission(getContext(), getActivity(), REQUEST_CODE);
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_driver_order, container, false);
     }
@@ -117,6 +115,9 @@ public class DriverOrderFragment extends Fragment {
         hasActiveOrder = currentUser.getBoolean(KEY_HAS_ORDER);
 
         if(hasActiveOrder){
+
+            //User.callPermission(getContext(), getActivity(), REQUEST_CODE);
+
             setValues(view);
 
             // Navigate to store
@@ -259,8 +260,11 @@ public class DriverOrderFragment extends Fragment {
         buttonCallUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
-                startActivity(intent);
+                User.callPermission(getContext(), getActivity(), REQUEST_CODE);
+                if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
+                    startActivity(intent);
+                }
             }
         });
     }

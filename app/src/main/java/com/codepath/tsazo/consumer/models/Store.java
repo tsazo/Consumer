@@ -99,7 +99,6 @@ public class Store {
                     address = jsonObject.getJSONObject("result").getString("formatted_address");
                     listener.onAddressSet(address);
 
-                    // TODO: check if this changes it
                     StoreActivity.getAdapter().notifyDataSetChanged();
                     Log.i(TAG, address);
                 } catch (JSONException e) {

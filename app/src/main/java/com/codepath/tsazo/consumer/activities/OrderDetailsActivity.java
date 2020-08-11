@@ -1,8 +1,11 @@
 package com.codepath.tsazo.consumer.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,7 +41,6 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 
 public class OrderDetailsActivity extends AppCompatActivity {
 
-
     private static final String TAG = "OrderDetailsActivity";
     private String KEY_STORE_NAME = "storeName";
     private String KEY_STORE_ADDRESS = "address";
@@ -62,7 +64,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private DatabaseReference driverLocation;
     private static Marker marker;
 
-    // Cal permission
+    // Call permission
     private static final int REQUEST_CODE = 123;
 
     @Override
@@ -108,11 +110,19 @@ public class OrderDetailsActivity extends AppCompatActivity {
     protected void queryOrder() {
         // Specify which class to query
         ParseQuery<Order> query = ParseQuery.getQuery(Order.class);
-        query.include(Order.KEY_DONE);
+        query.include(Order.KEY_OBJECT_ID);
         query.include(Order.KEY_DRIVER);
+        query.include(Order.KEY_DONE);
 
-        query.whereEqualTo(Order.KEY_DRIVER, order.getDriver());
-        query.whereEqualTo(Order.KEY_DONE, !order.getIsDone());
+        Log.i(TAG, "Order.key: "+ Order.KEY_OBJECT_ID);
+        Log.i(TAG, "order.getObject: "+ order.getObjectId());
+        Log.i(TAG, "order.getDriver: "+ order.getDriver());
+
+
+
+        query.whereEqualTo(Order.KEY_OBJECT_ID, order.getObjectId());
+
+        query.whereEqualTo(Order.KEY_DONE, false);
 
         query.findInBackground(new FindCallback<Order>() {
             @Override
@@ -122,9 +132,19 @@ public class OrderDetailsActivity extends AppCompatActivity {
                     return;
                 }
 
+                Log.i(TAG, "orders: " + orders);
+
                 if(!orders.isEmpty()){
                     hasActiveDriver = true;
-                    User.callPermission(OrderDetailsActivity.this, OrderDetailsActivity.this, REQUEST_CODE);
+
+                    Log.i(TAG, "driver... " + orders.get(0).getDriver().getUsername());
+
+                    order = orders.get(orders.size()-1);
+                    //order.setDriver(orders.get(0).getDriver());
+
+
+                    //order.saveInBackground();
+
                 }
 
                 setValues();
@@ -132,7 +152,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // Method to set the values into the views
+    // Method to set the values into the views if driver is NOT assigned
     private void setValues() {
         try {
             textViewStoreName.setText(order.getStore().fetchIfNeeded().getString(KEY_STORE_NAME));
@@ -146,6 +166,40 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 buttonCallDriver.setVisibility(View.VISIBLE);
                 textViewDriver.setText(order.getDriver().fetchIfNeeded().getString(KEY_NAME));
                 driverLocation = FirebaseDatabase.getInstance().getReference();
+
+
+
+                callDriver();
+
+                updateDriverLocation();
+
+            } catch (Exception e){
+                Log.e(TAG, "Cannot fetch driver name", e);
+            }
+        } else {
+            textViewDriver.setText("No driver assigned to order");
+            buttonCallDriver.setVisibility(View.GONE);
+        }
+
+        textViewOrderNumber.setText("Order #: " + order.getOrderNumber());
+    }
+
+    // Method to set the values into the views if driver is assigned
+    private void setValues(Order order) {
+        try {
+            textViewStoreName.setText(order.getStore().fetchIfNeeded().getString(KEY_STORE_NAME));
+            textViewStoreAddress.setText(order.getStore().fetchIfNeeded().getString(KEY_STORE_ADDRESS));
+        } catch (Exception e){
+            Log.e(TAG, "Cannot fetch store name or address", e);
+        }
+
+        if(hasActiveDriver){
+            try {
+                buttonCallDriver.setVisibility(View.VISIBLE);
+                textViewDriver.setText(order.getDriver().fetchIfNeeded().getString(KEY_NAME));
+                driverLocation = FirebaseDatabase.getInstance().getReference();
+
+
 
                 callDriver();
 
@@ -167,8 +221,11 @@ public class OrderDetailsActivity extends AppCompatActivity {
         buttonCallDriver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getUser().getString(KEY_PHONE_NUMBER)));
-                startActivity(intent);
+                User.callPermission(OrderDetailsActivity.this, OrderDetailsActivity.this, REQUEST_CODE);
+                if(ContextCompat.checkSelfPermission(OrderDetailsActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + order.getDriver().getString(KEY_PHONE_NUMBER)));
+                    startActivity(intent);
+                }
             }
         });
     }

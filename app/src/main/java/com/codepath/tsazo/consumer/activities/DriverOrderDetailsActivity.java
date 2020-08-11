@@ -101,6 +101,7 @@ public class DriverOrderDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 order.setDriver(ParseUser.getCurrentUser());
                 order.saveInBackground();
+                Log.i(TAG, "driver!!: " + order.getDriver().getUsername());
                 ParseUser.getCurrentUser().put(KEY_HAS_ORDER, true);
                 ParseUser.getCurrentUser().saveInBackground();
 

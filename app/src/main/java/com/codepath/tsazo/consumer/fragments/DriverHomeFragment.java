@@ -191,17 +191,19 @@ public class DriverHomeFragment extends Fragment {
                 List<Order> closeOrders = new ArrayList<>();
 
                 for(Order order: orders) {
-                    Log.i(TAG, "Order: " + order.getOrderNumber() + ", user: " + order.getUser().getUsername());
 
-                    Double orderLat = order.getStore().getLocation().getLatitude();
-                    Double orderLong = order.getStore().getLocation().getLongitude();
-                    Double userLat = currentUser.getParseGeoPoint(KEY_LOCATION).getLatitude();
-                    Double userLong = currentUser.getParseGeoPoint(KEY_LOCATION).getLongitude();
+                    if (order.getUser() != null){
+                        Log.i(TAG, "Order: " + order.getOrderNumber() + ", user: " + order.getUser().getUsername());
 
-                    if(User.calculateDistance(orderLat, orderLong, userLat, userLong) < 10){
-                        closeOrders.add(order);
+                        Double orderLat = order.getStore().getLocation().getLatitude();
+                        Double orderLong = order.getStore().getLocation().getLongitude();
+                        Double userLat = currentUser.getParseGeoPoint(KEY_LOCATION).getLatitude();
+                        Double userLong = currentUser.getParseGeoPoint(KEY_LOCATION).getLongitude();
+
+                        if(User.calculateDistance(orderLat, orderLong, userLat, userLong) < 10){
+                            closeOrders.add(order);
+                        }
                     }
-
                 }
 
                 allOrders.addAll(closeOrders);
